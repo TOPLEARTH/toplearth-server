@@ -10,6 +10,6 @@ public final class Constants {
 
     // 인증이 필요 없는 URL
     public static List<String> NO_NEED_AUTH_URLS = List.of(
-
+            "/test/signin/**"
     );
 }
