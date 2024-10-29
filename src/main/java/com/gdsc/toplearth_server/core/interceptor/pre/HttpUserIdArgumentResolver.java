@@ -18,7 +18,7 @@ public class HttpUserIdArgumentResolver implements HandlerMethodArgumentResolver
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.hasParameterAnnotation(UserId.class)
-                && parameter.getParameter().equals(UUID.class);
+                && parameter.getParameterType().equals(UUID.class);
     }
 
     @Override
