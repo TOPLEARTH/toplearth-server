@@ -37,13 +37,13 @@ public class Teams {
 
     //------------------------------------------------
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<Members> members;
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.MERGE)
     private List<Plogging> ploggings;
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.MERGE)
     private List<Matching> matchings;
 
     //--------------------------------------------------

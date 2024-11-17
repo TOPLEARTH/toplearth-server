@@ -33,6 +33,6 @@ public class Products {
 
     //---------------------------------------------------------
 
-    @OneToMany(mappedBy = "products", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
     private List<Orders> orders;
 }

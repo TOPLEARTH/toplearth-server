@@ -63,22 +63,22 @@ public class Users {
 
     //-------------------------------------------------
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Missions> missions;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Credits> credits;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Orders> orders;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Plogging> plogging;
 
-    @OneToMany(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Reports> reports;
 
-    @OneToOne(mappedBy = "users", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private Members member;
 
     //--------------------------------------------------
