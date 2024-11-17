@@ -54,11 +54,11 @@ public class Matching {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id", nullable = false)
-    private Teams teams;
+    private Teams team;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "opponent_id", nullable = false)
-    private Teams opponentTeams;
+    private Teams opponentTeam;
 
     //--------------------------------------
 

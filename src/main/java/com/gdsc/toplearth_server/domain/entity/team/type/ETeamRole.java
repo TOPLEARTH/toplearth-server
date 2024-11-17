@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ETeamRole {
     LEADER("LEADER"),
-    MEMEBER("MEMBER");
+    MEMBER("MEMBER");
 
     private final String teamRole;
 }
