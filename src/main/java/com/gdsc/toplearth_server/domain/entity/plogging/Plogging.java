@@ -17,7 +17,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
@@ -34,7 +33,7 @@ public class Plogging {
     private Long id;
 
     @Column(nullable = false, precision = 5, scale = 3)
-    private BigDecimal distance;
+    private Long distance;
 
     @Column
     private Integer pickUpCnt;
@@ -55,11 +54,11 @@ public class Plogging {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    private Users user;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id")
-    private Teams teams;
+    private Teams team;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matching_id")
@@ -76,4 +75,6 @@ public class Plogging {
 
     @OneToMany(mappedBy = "plogging", cascade = CascadeType.MERGE)
     private List<Reports> reports;
+
+
 }

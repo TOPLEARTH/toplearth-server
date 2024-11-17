@@ -17,6 +17,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -40,12 +41,30 @@ public class Members {
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    private Users user;
 
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id", nullable = false)
-    private Teams teams;
+    private Teams team;
+
+    //-------------------------------------------
+
+    @Builder
+    public Members(ETeamRole eTeamRole, Users user, Teams team) {
+        this.eTeamRole = eTeamRole;
+        this.joinedAt = LocalDateTime.now();
+        this.team = team;
+        this.user = user;
+    }
+
+    public static Members toMemberEntity(ETeamRole eTeamRole, Users user, Teams team) {
+        return Members.builder()
+                .eTeamRole(eTeamRole)
+                .user(user)
+                .team(team)
+                .build();
+    }
 
 }

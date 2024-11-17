@@ -21,12 +21,11 @@ public enum ErrorCode {
     TOKEN_MALFORMED("40008", HttpStatus.UNAUTHORIZED, "잘못된 토큰을 사용했어요."),
     TOKEN_TYPE("40009", HttpStatus.UNAUTHORIZED, "잘못된 토큰타입을 사용했어요."),
 
-
     /**
      * 401** Unauthorized
      */
     FAILURE_LOGIN("40100", HttpStatus.UNAUTHORIZED, "로그인에 실패했습니다."),
-    TOKEN_EXPIRED("40101", HttpStatus.UNAUTHORIZED,"토큰이 만료되었습니다,"),
+    TOKEN_EXPIRED("40101", HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다,"),
     TOKEN_UNSUPPORTED("40102", HttpStatus.UNAUTHORIZED, "지원되지 않는 형식의 토큰이에요"),
     TOKEN_UNKNOWN("40103", HttpStatus.UNAUTHORIZED, "토큰을 알수 없어요"),
 
@@ -41,11 +40,20 @@ public enum ErrorCode {
      */
     NOT_FOUND_END_POINT("40400", HttpStatus.NOT_FOUND, "존재하지 않는 엔드포인트입니다."),
     NOT_FOUND_USER("40401", HttpStatus.NOT_FOUND, "해당 사용자가 존재하지 않습니다."),
+    NOT_FOUND_TEAM("40402", HttpStatus.NOT_FOUND, "해당 팀이 존재하지 않습니다."),
+    NOT_FOUND_MEMBER("40403", HttpStatus.NOT_FOUND, "해당 팀 멤버가 존재하지 않습니다."),
 
     /**
      * 405** Method Not Allowed
      */
     METHOD_NOT_ALLOWED("40500", HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 HTTP 메소드입니다."),
+
+    /**
+     * 409** Conflict
+     */
+    CONFLICT_TEAM_NAME("40900", HttpStatus.CONFLICT, "팀 이름이 중복입니다."),
+    CONFLICT_TEAM_COUNT("40901", HttpStatus.CONFLICT, "팀 정원을 초과하였습니다."),
+    CONFLICT_TEAM_BUILDING("40902", HttpStatus.CONFLICT, "이미 팀에 가입되어 있어 다른 팀을 생성하거나 가입할 수 없습니다.."),
 
     /**
      * 500** Server Error

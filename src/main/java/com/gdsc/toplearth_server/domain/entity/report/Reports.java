@@ -36,7 +36,7 @@ public class Reports {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    private Users user;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "plogging_id", nullable = false)

@@ -10,8 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,15 +32,44 @@ public class Teams {
     @Column(nullable = false)
     private String code;
 
+    @Column
+    private LocalDateTime createdAt;
+
     //------------------------------------------------
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private List<Members> members;
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.MERGE)
     private List<Plogging> ploggings;
 
-    @OneToMany(mappedBy = "teams", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "team", cascade = CascadeType.MERGE)
     private List<Matching> matchings;
+
+    //--------------------------------------------------
+
+    @Builder
+    public Teams(String name, String code) {
+        this.name = name;
+        this.code = code;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public static Teams toTeamEntity(String name, String code) {
+        return Teams.builder()
+                .name(name)
+                .code(code)
+                .build();
+    }
+
+    //--------------------------------------------------
+
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    public void updateCode(String code) {
+        this.code = code;
+    }
 
 }

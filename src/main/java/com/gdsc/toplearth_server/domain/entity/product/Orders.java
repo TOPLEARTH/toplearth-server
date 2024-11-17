@@ -35,9 +35,9 @@ public class Orders {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    private Users user;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-    private Products products;
+    private Products product;
 }

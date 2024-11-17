@@ -36,7 +36,7 @@ public class Credits {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users users;
+    private Users user;
 
     //---------------------------------------
 
