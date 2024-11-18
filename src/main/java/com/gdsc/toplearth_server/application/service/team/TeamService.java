@@ -2,6 +2,7 @@ package com.gdsc.toplearth_server.application.service.team;
 
 import com.gdsc.toplearth_server.application.dto.team.CreateTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
@@ -100,7 +101,7 @@ public class TeamService {
 
     //팀목록 검색
     @Transactional(readOnly = true)
-    public List<ReadTeamResponseDto> searchTeam(String searchName) {
+    public List<ReadTeamInfoResponseDto> searchTeam(String searchName) {
         List<Team> teams = teamsRepository.findByNameContaining(searchName);
 
         if (teams.isEmpty()) {
@@ -108,11 +109,8 @@ public class TeamService {
         }
 
         return teams.stream()
-                .map(team -> ReadTeamResponseDto.builder()
-                        .teamId(team.getId())
-                        .teamCode(team.getCode())
-                        .teamName(team.getName())
-                        .build()).toList();
+                .map(ReadTeamInfoResponseDto::of)
+                .collect(Collectors.toList());
     }
 
     //팀 이름 업데이트
@@ -120,7 +118,7 @@ public class TeamService {
         Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
 
-        team.updateName(updateTeamNameRequestDto.name());
+        team.updateName(updateTeamNameRequestDto.teamName());
 
         return UpdateTeamNameResponseDto.builder()
                 .teamName(team.getName())
@@ -135,7 +133,7 @@ public class TeamService {
         team.updateCode(codeGenerator());
 
         return UpdateTeamCodeResponseDto.builder()
-                .code(team.getCode())
+                .teamCode(team.getCode())
                 .build();
     }
 
@@ -176,7 +174,7 @@ public class TeamService {
 
     //팀 생성
     public CreateTeamResponseDto createTeam(CreateTeamRequestDto createTeamRequestDto, UUID userId) {
-        if (teamsRepository.existsByName(createTeamRequestDto.name())) {
+        if (teamsRepository.existsByName(createTeamRequestDto.teamName())) {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_NAME);
         }
 
@@ -187,7 +185,8 @@ public class TeamService {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_BUILDING);
         }
 
-        Team team = Team.toTeamEntity(createTeamRequestDto.name(), codeGenerator());
+        Team team = Team.toTeamEntity(createTeamRequestDto.teamName(), codeGenerator());
+
         teamsRepository.save(team);
 
         Member member = Member.toMemberEntity(ETeamRole.LEADER, user, team);
