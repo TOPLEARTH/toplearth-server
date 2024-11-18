@@ -46,6 +46,7 @@ public enum ErrorCode {
     NOT_FOUND_USER("40401", HttpStatus.NOT_FOUND, "해당 사용자가 존재하지 않습니다."),
     NOT_FOUND_TEAM("40402", HttpStatus.NOT_FOUND, "해당 팀이 존재하지 않습니다."),
     NOT_FOUND_MEMBER("40403", HttpStatus.NOT_FOUND, "해당 팀 멤버가 존재하지 않습니다."),
+    NOT_FOUND_REPORT("40404", HttpStatus.NOT_FOUND, "해당 신고가 존재하지 않습니다."),
 
     /**
      * 405** Method Not Allowed
