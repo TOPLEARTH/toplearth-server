@@ -1,14 +1,10 @@
-package com.gdsc.toplearth_server.domain.entity.mission;
+package com.gdsc.toplearth_server.domain.entity.credit;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionName;
-import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionType;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,44 +13,42 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
-@Table(name = "missions")
-public class Missions {
+@Table(name = "credits")
+public class Credit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private EMissionName eMissionName;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private EMissionType eMissionType;
-
-    @Column(nullable = false)
-    private Integer target;
+    private String content;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
-
-    @Column
-    private LocalDateTime completedAt;
-
-    @Column(nullable = false)
-    private Boolean isCompleted;
 
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
+    //---------------------------------------
+
+    @Builder
+    public Credit(String content) {
+        this.content = content;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public static Credit toEntity(String content) {
+        return Credit.builder()
+                .content(content)
+                .build();
+    }
 }

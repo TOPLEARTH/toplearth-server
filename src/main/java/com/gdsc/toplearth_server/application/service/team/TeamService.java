@@ -12,14 +12,14 @@ import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
 import com.gdsc.toplearth_server.domain.entity.plogging.type.ELabel;
-import com.gdsc.toplearth_server.domain.entity.team.Members;
-import com.gdsc.toplearth_server.domain.entity.team.Teams;
+import com.gdsc.toplearth_server.domain.entity.team.Member;
+import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.team.type.ETeamRole;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
-import com.gdsc.toplearth_server.infrastructure.repository.team.MembersRepositoryImpl;
-import com.gdsc.toplearth_server.infrastructure.repository.team.TeamsRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.team.CreateTeamRequestDto;
 import com.gdsc.toplearth_server.presentation.request.team.UpdateTeamNameRequestDto;
@@ -39,8 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Slf4j
 public class TeamService {
-    private final TeamsRepositoryImpl teamsRepository;
-    private final MembersRepositoryImpl membersRepository;
+    private final TeamRepositoryImpl teamsRepository;
+    private final MemberRepositoryImpl membersRepository;
     private final UserRepositoryImpl userRepository;
     private final MatchingRepositoryImpl matchingRepository;
     private final PloggingRepositoryImpl ploggingRepository;
@@ -48,15 +48,15 @@ public class TeamService {
     //팀 네비게이션 바 팀 정보 조회
     @Transactional(readOnly = true)
     public ReadTeamResponseDto readTeam(UUID userId) {
-        Users user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER)); // 일단 user를 찾는다.
 
-        Teams team = user.getMember().getTeam(); // 그 해당하는 유저의 팀을 찾는다.
+        Team team = user.getMember().getTeam(); // 그 해당하는 유저의 팀을 찾는다.
 
         Integer matchCnt = matchingRepository.countByTeam(team); // 유저가 속한 팀의 매치 횟수
         Integer winCnt = matchingRepository.countByTeamAndWinFlagIsTrue(team); // 유저가 속한 팀의 승리횟수
 
-        List<Members> members = membersRepository.findByTeam(team); // 그 유저가 속한 팀의 모든 멤버들을 조회한다. //멤버 정보에 사용할 예정
+        List<Member> members = membersRepository.findByTeam(team); // 그 유저가 속한 팀의 모든 멤버들을 조회한다. //멤버 정보에 사용할 예정
 
         List<Plogging> ploggingList = ploggingRepository.findByYearAndTeam(team.getCreatedAt().getYear(),
                 team); // 플로깅을 시작한 연도와 유저의 팀을 기준으로 플로깅 정보를 불러온다.
@@ -101,7 +101,7 @@ public class TeamService {
     //팀목록 검색
     @Transactional(readOnly = true)
     public List<ReadTeamResponseDto> searchTeam(String searchName) {
-        List<Teams> teams = teamsRepository.findByNameContaining(searchName);
+        List<Team> teams = teamsRepository.findByNameContaining(searchName);
 
         if (teams.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_TEAM);
@@ -117,7 +117,7 @@ public class TeamService {
 
     //팀 이름 업데이트
     public UpdateTeamNameResponseDto updateTeamName(Long teamId, UpdateTeamNameRequestDto updateTeamNameRequestDto) {
-        Teams team = teamsRepository.findById(teamId)
+        Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
 
         team.updateName(updateTeamNameRequestDto.name());
@@ -129,7 +129,7 @@ public class TeamService {
 
     //팀 코드 업데이트
     public UpdateTeamCodeResponseDto updateTeamCode(Long teamId) {
-        Teams team = teamsRepository.findById(teamId)
+        Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
 
         team.updateCode(codeGenerator());
@@ -141,16 +141,16 @@ public class TeamService {
 
     //팀 팀원 강퇴
     public Boolean deleteTeamMember(Long teamId, Long memberId, UUID userId) {
-        Users user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (user.getMember().getETeamRole().equals(ETeamRole.MEMBER)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED_ERROR);
         }
 
-        Teams team = teamsRepository.findById(teamId)
+        Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
-        Members member = membersRepository.findByIdAndTeam(memberId, team)
+        Member member = membersRepository.findByIdAndTeam(memberId, team)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         membersRepository.delete(member);
@@ -160,13 +160,13 @@ public class TeamService {
 
     //팀 나가기
     public Boolean deleteTeam(Long teamId, UUID userId) {
-        Users user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Teams team = teamsRepository.findById(teamId)
+        Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
 
-        Members member = membersRepository.findByUserAndTeam(user, team)
+        Member member = membersRepository.findByUserAndTeam(user, team)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         membersRepository.delete(member);
@@ -180,18 +180,18 @@ public class TeamService {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_NAME);
         }
 
-        Users user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         if (membersRepository.existsByUser(user)) {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_BUILDING);
         }
 
-        Teams team = Teams.toTeamEntity(createTeamRequestDto.name(), codeGenerator());
+        Team team = Team.toTeamEntity(createTeamRequestDto.name(), codeGenerator());
         teamsRepository.save(team);
 
-        Members members = Members.toMemberEntity(ETeamRole.LEADER, user, team);
-        membersRepository.save(members);
+        Member member = Member.toMemberEntity(ETeamRole.LEADER, user, team);
+        membersRepository.save(member);
 
         return CreateTeamResponseDto.builder()
                 .name(team.getName())
@@ -201,17 +201,17 @@ public class TeamService {
 
     //팀 참여
     public Boolean joinTeam(Long teamId, UUID userId) {
-        Users user = userRepository.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Teams team = teamsRepository.findById(teamId)
+        Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
 
         if (membersRepository.countByTeam(team) > 4) {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_COUNT);
         }
 
-        Members member = Members.toMemberEntity(ETeamRole.MEMBER, user, team);
+        Member member = Member.toMemberEntity(ETeamRole.MEMBER, user, team);
         membersRepository.save(member);
 
         return true;

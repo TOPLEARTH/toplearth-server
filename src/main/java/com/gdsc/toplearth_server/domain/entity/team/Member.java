@@ -3,7 +3,7 @@ package com.gdsc.toplearth_server.domain.entity.team;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.gdsc.toplearth_server.domain.entity.team.type.ETeamRole;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "members")
-public class Members {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,26 +41,26 @@ public class Members {
 
     @OneToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id", nullable = false)
-    private Teams team;
+    private Team team;
 
     //-------------------------------------------
 
     @Builder
-    public Members(ETeamRole eTeamRole, Users user, Teams team) {
+    public Member(ETeamRole eTeamRole, User user, Team team) {
         this.eTeamRole = eTeamRole;
         this.joinedAt = LocalDateTime.now();
         this.team = team;
         this.user = user;
     }
 
-    public static Members toMemberEntity(ETeamRole eTeamRole, Users user, Teams team) {
-        return Members.builder()
+    public static Member toMemberEntity(ETeamRole eTeamRole, User user, Team team) {
+        return Member.builder()
                 .eTeamRole(eTeamRole)
                 .user(user)
                 .team(team)

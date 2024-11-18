@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "products")
-public class Products {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,5 +34,5 @@ public class Products {
     //---------------------------------------------------------
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
-    private List<Orders> orders;
+    private List<Order> orders;
 }

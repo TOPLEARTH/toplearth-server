@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "teams")
-public class Teams {
+public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,7 +38,7 @@ public class Teams {
     //------------------------------------------------
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
-    private List<Members> members;
+    private List<Member> members;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.MERGE)
     private List<Plogging> ploggings;
@@ -49,14 +49,14 @@ public class Teams {
     //--------------------------------------------------
 
     @Builder
-    public Teams(String name, String code) {
+    public Team(String name, String code) {
         this.name = name;
         this.code = code;
         this.createdAt = LocalDateTime.now();
     }
 
-    public static Teams toTeamEntity(String name, String code) {
-        return Teams.builder()
+    public static Team toTeamEntity(String name, String code) {
+        return Team.builder()
                 .name(name)
                 .code(code)
                 .build();
