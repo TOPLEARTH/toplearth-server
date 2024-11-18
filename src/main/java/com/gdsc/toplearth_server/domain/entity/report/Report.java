@@ -41,4 +41,10 @@ public class Report {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "plogging_id", nullable = false)
     private Plogging plogging;
+
+    //-------------------------------------------
+
+    public void updateExecute() {
+        this.isExecuted = true;
+    }
 }

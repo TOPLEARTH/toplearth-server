@@ -1,13 +1,11 @@
 package com.gdsc.toplearth_server.presentation.controller.team;
 
-import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.service.team.TeamService;
 import com.gdsc.toplearth_server.core.annotation.UserId;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.presentation.request.team.CreateTeamRequestDto;
 import com.gdsc.toplearth_server.presentation.request.team.UpdateTeamNameRequestDto;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,7 +33,7 @@ public class TeamController {
 
     //팀 검색
     @GetMapping("/search")
-    public CommonResponseDto<List<ReadTeamResponseDto>> searchTeam(
+    public CommonResponseDto<?> searchTeam(
             @RequestParam(value = "text", required = false) String searchTeam
     ) {
         return CommonResponseDto.ok(teamService.searchTeam(searchTeam));
