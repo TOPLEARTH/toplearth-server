@@ -1,9 +1,9 @@
-package com.gdsc.toplearth_server.domain.entity.product;
-
+package com.gdsc.toplearth_server.domain.entity.report;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,14 +16,12 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicUpdate
-@Table(name = "orders")
-public class Orders {
+@Table(name = "reports")
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,13 +29,16 @@ public class Orders {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private Boolean isExecuted;
+
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Products product;
+    @JoinColumn(name = "plogging_id", nullable = false)
+    private Plogging plogging;
 }

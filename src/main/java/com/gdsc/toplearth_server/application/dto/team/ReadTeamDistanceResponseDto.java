@@ -1,6 +1,6 @@
 package com.gdsc.toplearth_server.application.dto.team;
 
-import com.gdsc.toplearth_server.domain.entity.team.Members;
+import com.gdsc.toplearth_server.domain.entity.team.Member;
 import com.gdsc.toplearth_server.domain.entity.team.type.ETeamRole;
 import lombok.Builder;
 
@@ -11,11 +11,11 @@ public record ReadTeamDistanceResponseDto(
         ETeamRole role,
         Double distance
 ) {
-    public static ReadTeamDistanceResponseDto of(Members members, Double distance) {
+    public static ReadTeamDistanceResponseDto of(Member member, Double distance) {
         return ReadTeamDistanceResponseDto.builder()
-                .id(members.getId())
-                .name(members.getUser().getNickname())
-                .role(members.getETeamRole())
+                .id(member.getId())
+                .name(member.getUser().getNickname())
+                .role(member.getETeamRole())
                 .distance(distance)
                 .build();
     }

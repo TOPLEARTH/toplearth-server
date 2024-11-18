@@ -4,9 +4,9 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.gdsc.toplearth_server.domain.entity.matching.Matching;
 import com.gdsc.toplearth_server.domain.entity.region.Region;
-import com.gdsc.toplearth_server.domain.entity.report.Reports;
-import com.gdsc.toplearth_server.domain.entity.team.Teams;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.report.Report;
+import com.gdsc.toplearth_server.domain.entity.team.Team;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,11 +54,11 @@ public class Plogging {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id")
-    private Teams team;
+    private Team team;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "matching_id")
@@ -74,7 +74,7 @@ public class Plogging {
     private List<PloggingImage> ploggingImages;
 
     @OneToMany(mappedBy = "plogging", cascade = CascadeType.MERGE)
-    private List<Reports> reports;
+    private List<Report> reports;
 
 
 }

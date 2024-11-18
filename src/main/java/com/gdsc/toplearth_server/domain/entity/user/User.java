@@ -1,11 +1,12 @@
 package com.gdsc.toplearth_server.domain.entity.user;
 
-import com.gdsc.toplearth_server.domain.entity.credit.Credits;
-import com.gdsc.toplearth_server.domain.entity.mission.Missions;
+import com.gdsc.toplearth_server.domain.entity.credit.Credit;
+import com.gdsc.toplearth_server.domain.entity.mission.Mission;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
-import com.gdsc.toplearth_server.domain.entity.product.Orders;
-import com.gdsc.toplearth_server.domain.entity.report.Reports;
-import com.gdsc.toplearth_server.domain.entity.team.Members;
+import com.gdsc.toplearth_server.domain.entity.product.Order;
+import com.gdsc.toplearth_server.domain.entity.report.Report;
+import com.gdsc.toplearth_server.domain.entity.team.Member;
+import com.gdsc.toplearth_server.domain.entity.user.type.ELoginProvider;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -33,7 +34,7 @@ import org.hibernate.annotations.DynamicUpdate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 @Table(name = "users")
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -51,6 +52,10 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private EUserRole userRole;
 
+    @Column(name = "login_provider", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ELoginProvider provider;
+
     @Column(name = "profile_image_url", length = 2048)
     private String profileImageUrl;
 
@@ -64,41 +69,43 @@ public class Users {
     //-------------------------------------------------
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
-    private List<Missions> missions;
+    private List<Mission> missions;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
-    private List<Credits> credits;
+    private List<Credit> credits;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
-    private List<Orders> orders;
+    private List<Order> orders;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
     private List<Plogging> plogging;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)
-    private List<Reports> reports;
+    private List<Report> reports;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
-    private Members member;
+    private Member member;
 
     //--------------------------------------------------
 
-    @Builder
-    public Users(String email, String nickname, EUserRole userRole) {
+    @Builder(access = AccessLevel.PRIVATE)
+    public User(String email, String nickname, EUserRole userRole, ELoginProvider provider) {
         this.email = email;
         this.nickname = nickname;
         this.goalDistance = BigDecimal.ZERO;
         this.userRole = userRole;
+        this.provider = provider;
         this.profileImageUrl = null;
         this.refreshToken = null;
         this.credit = 0;
     }
 
-    public static Users toUserEntity(String email, String nickname, EUserRole userRole) {
-        return Users.builder()
+    public static User toUserEntity(String email, String nickname, EUserRole userRole, ELoginProvider provider) {
+        return User.builder()
                 .email(email)
                 .nickname(nickname)
                 .userRole(userRole)
+                .provider(provider)
                 .build();
     }
 

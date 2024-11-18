@@ -1,11 +1,14 @@
-package com.gdsc.toplearth_server.domain.entity.report;
+package com.gdsc.toplearth_server.domain.entity.mission;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionName;
+import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionType;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,29 +19,42 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "reports")
-public class Reports {
+@DynamicUpdate
+@Table(name = "missions")
+public class Mission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    private EMissionName eMissionName;
 
     @Column(nullable = false)
-    private Boolean isExecuted;
+    @Enumerated(EnumType.STRING)
+    private EMissionType eMissionType;
+
+    @Column(nullable = false)
+    private Integer target;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column
+    private LocalDateTime completedAt;
+
+    @Column(nullable = false)
+    private Boolean isCompleted;
 
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
+    private User user;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "plogging_id", nullable = false)
-    private Plogging plogging;
 }

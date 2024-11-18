@@ -3,7 +3,7 @@ package com.gdsc.toplearth_server.domain.entity.matching;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
-import com.gdsc.toplearth_server.domain.entity.team.Teams;
+import com.gdsc.toplearth_server.domain.entity.team.Team;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,11 +54,11 @@ public class Matching {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "team_id", nullable = false)
-    private Teams team;
+    private Team team;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "opponent_id", nullable = false)
-    private Teams opponentTeam;
+    private Team opponentTeam;
 
     //--------------------------------------
 

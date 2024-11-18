@@ -2,7 +2,8 @@ package com.gdsc.toplearth_server.application.service;
 
 import com.gdsc.toplearth_server.core.security.JwtDto;
 import com.gdsc.toplearth_server.core.util.JwtUtil;
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.user.User;
+import com.gdsc.toplearth_server.domain.entity.user.type.ELoginProvider;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import jakarta.transaction.Transactional;
@@ -19,11 +20,7 @@ public class TestService {
     private final JwtUtil jwtUtil;
 
     public JwtDto signIn(String username, EUserRole role) {
-        Users user = Users.builder()
-                .email(username)
-                .userRole(role)
-                .nickname("aaa")
-                .build();
+        User user = User.toUserEntity(username, "test", EUserRole.USER, ELoginProvider.NAVER);
 
         userRepository.save(user);
 

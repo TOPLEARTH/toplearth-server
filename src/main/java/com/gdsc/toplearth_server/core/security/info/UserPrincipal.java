@@ -1,6 +1,6 @@
 package com.gdsc.toplearth_server.core.security.info;
 
-import com.gdsc.toplearth_server.domain.entity.user.Users;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +22,7 @@ public class UserPrincipal implements UserDetails {
     private final Collection<? extends GrantedAuthority> authorities;
 
 
-    public static UserPrincipal create(Users user) {
+    public static UserPrincipal create(User user) {
         List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole()));
         return UserPrincipal.builder()
                 .uuid(user.getId())
