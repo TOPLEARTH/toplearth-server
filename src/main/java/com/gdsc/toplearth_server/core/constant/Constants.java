@@ -13,7 +13,11 @@ public final class Constants {
     public static final String APPLE_PUBLIC_KEYS_URL = "https://appleid.apple.com/auth/keys";
 
     // 인증이 필요 없는 URL
-    public static List<String> NO_NEED_AUTH_URLS = List.of(
-            "/api/v1/test/**"
+    public static final List<String> NO_NEED_AUTH_URLS = List.of(
+            "/api/v1/test/hello",
+            "/api/v1/test/signin/{name}",
+
+            "/api/v1/auth/login/kakao",
+            "/api/v1/auth/login/apple"
     );
 }
