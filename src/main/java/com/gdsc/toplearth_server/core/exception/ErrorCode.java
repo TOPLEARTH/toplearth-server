@@ -18,8 +18,7 @@ public enum ErrorCode {
     MISSING_REQUEST_PART("40005", HttpStatus.BAD_REQUEST, "Missing request part."),
     UNSUPPORTED_MEDIA_TYPE("40006", HttpStatus.BAD_REQUEST, "Unsupported Media Type."),
     INVALID_REQUEST_HEAD("40007", HttpStatus.BAD_REQUEST, "Invalid request head provided."),
-    TOKEN_MALFORMED("40008", HttpStatus.UNAUTHORIZED, "잘못된 토큰을 사용했어요."),
-    TOKEN_TYPE("40009", HttpStatus.UNAUTHORIZED, "잘못된 토큰타입을 사용했어요."),
+    INVALID_OAUTH2_PROVIDER("40008", HttpStatus.BAD_REQUEST, "잘못된 OAuth2 제공자입니다."),
 
     /**
      * 401** Unauthorized
@@ -28,13 +27,18 @@ public enum ErrorCode {
     TOKEN_EXPIRED("40101", HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다,"),
     TOKEN_UNSUPPORTED("40102", HttpStatus.UNAUTHORIZED, "지원되지 않는 형식의 토큰이에요"),
     TOKEN_UNKNOWN("40103", HttpStatus.UNAUTHORIZED, "토큰을 알수 없어요"),
+    TOKEN_MALFORMED("40104", HttpStatus.UNAUTHORIZED, "잘못된 토큰을 사용했어요."),
+    TOKEN_TYPE("40105", HttpStatus.UNAUTHORIZED, "잘못된 토큰타입을 사용했어요."),
+    INVALID_APPLE_IDENTITY_TOKEN_ERROR("40106", HttpStatus.UNAUTHORIZED, "잘못된 Apple Identity 토큰입니다."),
+    EXPIRED_APPLE_IDENTITY_TOKEN_ERROR("40107", HttpStatus.UNAUTHORIZED, "만료된 Apple Identity 토큰입니다."),
+    INVALID_APPLE_PUBLIC_KEY_ERROR("40108", HttpStatus.UNAUTHORIZED, "잘못된 Apple 공개키입니다."),
 
     /**
      * 403** Access Denied
      */
-
     ACCESS_DENIED_ERROR("40300", HttpStatus.FORBIDDEN, "액세스 권한이 없습니다."),
     ENPTY_AUTHENTICATION("40301", HttpStatus.FORBIDDEN, "인증 토큰이 비었습니다."),
+
     /**
      * 404** Not Found
      */
