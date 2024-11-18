@@ -29,5 +29,15 @@ public class TestService {
         return jwtUtil.generateTokens(user.getId(), role);
     }
 
+    public JwtDto signInAdmin(String username, EUserRole role) {
+        User user = User.toUserEntity(username, "test", EUserRole.ADMIN, ELoginProvider.NAVER);
+
+        userRepository.save(user);
+
+        log.info("userId" + user.getId());
+
+        return jwtUtil.generateTokens(user.getId(), role);
+    }
+
 
 }

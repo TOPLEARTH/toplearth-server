@@ -4,6 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record UpdateTeamCodeResponseDto(
-        String code
+        String teamCode
 ) {
 }
