@@ -113,4 +113,9 @@ public class User {
         this.goalDistance = goalDistance;
     }
 
+    public Long getTotalDistance() {
+        return this.plogging.stream()
+                .mapToLong(Plogging::getDistance)
+                .sum();
+    }
 }
