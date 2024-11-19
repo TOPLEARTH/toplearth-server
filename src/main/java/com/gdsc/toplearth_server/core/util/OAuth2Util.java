@@ -2,8 +2,8 @@ package com.gdsc.toplearth_server.core.util;
 
 import com.gdsc.toplearth_server.application.dto.oauth.ApplePublicKeyListDto;
 import com.gdsc.toplearth_server.application.dto.oauth.OAuth2UserInfoResponseDto;
-import com.gdsc.toplearth_server.application.service.AppleJwtParser;
-import com.gdsc.toplearth_server.application.service.ApplePublicKeyGenerator;
+import com.gdsc.toplearth_server.application.service.oauth.AppleJwtParser;
+import com.gdsc.toplearth_server.application.service.oauth.ApplePublicKeyGenerator;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;

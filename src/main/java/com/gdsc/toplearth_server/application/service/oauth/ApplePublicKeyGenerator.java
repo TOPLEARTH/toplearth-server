@@ -1,4 +1,4 @@
-package com.gdsc.toplearth_server.application.service;
+package com.gdsc.toplearth_server.application.service.oauth;
 
 import com.gdsc.toplearth_server.application.dto.oauth.ApplePublicKeyDto;
 import com.gdsc.toplearth_server.application.dto.oauth.ApplePublicKeyListDto;
