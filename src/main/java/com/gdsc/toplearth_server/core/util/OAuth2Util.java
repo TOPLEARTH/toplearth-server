@@ -49,8 +49,7 @@ public class OAuth2Util {
             JsonElement element = JsonParser.parseString(response);
 
             return OAuth2UserInfoResponseDto.of(
-                    element.getAsJsonObject().get("id").getAsString(),
-                    element.getAsJsonObject().getAsJsonObject("kakao_account").get("email").getAsString()
+                    element.getAsJsonObject().get("id").getAsString()
             );
 
         } catch (RestClientException e) {
@@ -72,8 +71,7 @@ public class OAuth2Util {
         PublicKey publicKey = applePublicKeyGenerator.generatePublicKey(headers, applePublicKeys.getBody());
         Claims claims = appleJwtParser.parseClaims(appleIdToken, publicKey);
         return OAuth2UserInfoResponseDto.of(
-                claims.get("sub", String.class),
-                claims.get("email", String.class)
+                claims.get("sub", String.class)
         );
     }
 }
