@@ -22,7 +22,7 @@ public class ApplePublicKeyGenerator {
     private static final int POSITIVE_SIGN_NUM = 1;
 
     public PublicKey generatePublicKey(Map<String, String> tokenHeaders, ApplePublicKeyListDto applePublicKeys) {
-        List<ApplePublicKeyDto> publicKeys = applePublicKeys.keyList();
+        List<ApplePublicKeyDto> publicKeys = applePublicKeys.keys();
         ApplePublicKeyDto publicKey = publicKeys.stream()
                 .filter(key -> key.alg().equals(tokenHeaders.get(ALG_HEADER_KEY)))
                 .filter(key -> key.kid().equals(tokenHeaders.get(KID_HEADER_KEY)))
