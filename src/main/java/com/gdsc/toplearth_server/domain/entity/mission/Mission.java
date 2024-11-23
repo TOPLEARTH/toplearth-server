@@ -29,26 +29,30 @@ import org.hibernate.annotations.DynamicUpdate;
 public class Mission {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private EMissionName eMissionName;
+    @Column(name = "name", nullable = false)
+    private EMissionName missionName;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private EMissionType eMissionType;
+    @Column(name = "type", nullable = false)
+    private EMissionType missionType;
 
-    @Column(nullable = false)
+    @Column(name = "current", nullable = false)
+    private Integer current;
+
+    @Column(name = "target", nullable = false)
     private Integer target;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    @Column(nullable = false)
+    @Column(name = "is_completed", nullable = false)
     private Boolean isCompleted;
 
     //-------------------------------------------
@@ -57,4 +61,13 @@ public class Mission {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //-------------------------------------------
+
+
+
+    //-------------------------------------------
+
+    public Integer getProgressRate() {
+        return (int) ((double) current / target * 100);
+    }
 }

@@ -12,10 +12,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface UserRepositoryImpl extends JpaRepository<User, UUID>, UserRepository {
-    Optional<User> findByEmail(String email);
-
     @Query("SELECT u FROM User u WHERE (:nickname IS NULL OR u.nickname LIKE CONCAT('%', :nickname, '%')) AND u.userRole = :role")
     Page<User> searchUserList(@Param("nickname") String nickname,
                               @Param("role") EUserRole userRole,
                               Pageable pageable);
+
+    @Query("SELECT u FROM User u WHERE u.socialId = :socialId")
+    Optional<User> findBySocialId(String socialId);
 }

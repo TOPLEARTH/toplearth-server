@@ -1,4 +1,4 @@
-package com.gdsc.toplearth_server.application.service;
+package com.gdsc.toplearth_server.application.service.oauth;
 
 import com.gdsc.toplearth_server.application.dto.oauth.OAuth2UserInfoResponseDto;
 import com.gdsc.toplearth_server.core.constant.Constants;
@@ -29,7 +29,7 @@ public class AuthLoginService {
                 ELoginProvider.KAKAO.toString(),
                 refineToken(kakaoAccessToken)
         );
-        User user = userRepositoryImpl.findByEmail(OAuth2UserInfo.email())
+        User user = userRepositoryImpl.findBySocialId(OAuth2UserInfo.oAuthId())
                 .orElseGet(() -> joinUser(
                         OAuth2UserInfo,
                         ELoginProvider.KAKAO
@@ -43,7 +43,7 @@ public class AuthLoginService {
                 ELoginProvider.APPLE.toString(),
                 refineToken(appleIdToken)
         );
-        User user = userRepositoryImpl.findByEmail(OAuth2UserInfo.email())
+        User user = userRepositoryImpl.findBySocialId(OAuth2UserInfo.oAuthId())
                 .orElseGet(() -> joinUser(
                         OAuth2UserInfo,
                         ELoginProvider.APPLE
@@ -54,7 +54,7 @@ public class AuthLoginService {
     private User joinUser(OAuth2UserInfoResponseDto OAuth2UserInfo, ELoginProvider provider) {
         return userRepositoryImpl.save(
                 User.toUserEntity(
-                        OAuth2UserInfo.email(),
+                        OAuth2UserInfo.oAuthId(),
                         NicknameUtil.generateRandomNickname(),
                         EUserRole.USER,
                         provider

@@ -2,8 +2,8 @@ package com.gdsc.toplearth_server.core.util;
 
 import com.gdsc.toplearth_server.application.dto.oauth.ApplePublicKeyListDto;
 import com.gdsc.toplearth_server.application.dto.oauth.OAuth2UserInfoResponseDto;
-import com.gdsc.toplearth_server.application.service.AppleJwtParser;
-import com.gdsc.toplearth_server.application.service.ApplePublicKeyGenerator;
+import com.gdsc.toplearth_server.application.service.oauth.AppleJwtParser;
+import com.gdsc.toplearth_server.application.service.oauth.ApplePublicKeyGenerator;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -49,8 +49,7 @@ public class OAuth2Util {
             JsonElement element = JsonParser.parseString(response);
 
             return OAuth2UserInfoResponseDto.of(
-                    element.getAsJsonObject().get("id").getAsString(),
-                    element.getAsJsonObject().getAsJsonObject("kakao_account").get("email").getAsString()
+                    element.getAsJsonObject().get("id").getAsString()
             );
 
         } catch (RestClientException e) {
@@ -72,8 +71,7 @@ public class OAuth2Util {
         PublicKey publicKey = applePublicKeyGenerator.generatePublicKey(headers, applePublicKeys.getBody());
         Claims claims = appleJwtParser.parseClaims(appleIdToken, publicKey);
         return OAuth2UserInfoResponseDto.of(
-                claims.get("sub", String.class),
-                claims.get("email", String.class)
+                claims.get("sub", String.class)
         );
     }
 }

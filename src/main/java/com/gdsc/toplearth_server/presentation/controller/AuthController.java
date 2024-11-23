@@ -1,6 +1,6 @@
 package com.gdsc.toplearth_server.presentation.controller;
 
-import com.gdsc.toplearth_server.application.service.AuthLoginService;
+import com.gdsc.toplearth_server.application.service.oauth.AuthLoginService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.gdsc.toplearth_server.presentation.request.user.FcmTokenRequestDto;

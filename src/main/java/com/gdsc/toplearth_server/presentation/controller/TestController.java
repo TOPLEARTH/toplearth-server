@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     private final TestService testService;
 
-    @RequestMapping("/hello")
-    public String hello() {
-        return "Hello, World!";
+    @GetMapping("/hello")
+    public CommonResponseDto<?> hello() {
+        return CommonResponseDto.ok("hello");
     }
 
     @PostMapping("/signin/{name}")

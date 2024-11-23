@@ -39,8 +39,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
+    @Column(name = "social_id", nullable = false, unique = true)
+    private String socialId;
 
     @Column(name = "nickname", length = 20)
     private String nickname;
@@ -89,8 +89,8 @@ public class User {
     //--------------------------------------------------
 
     @Builder(access = AccessLevel.PRIVATE)
-    public User(String email, String nickname, EUserRole userRole, ELoginProvider provider) {
-        this.email = email;
+    public User(String socialId, String nickname, EUserRole userRole, ELoginProvider provider) {
+        this.socialId = socialId;
         this.nickname = nickname;
         this.goalDistance = BigDecimal.ZERO;
         this.userRole = userRole;
@@ -100,9 +100,9 @@ public class User {
         this.credit = 0;
     }
 
-    public static User toUserEntity(String email, String nickname, EUserRole userRole, ELoginProvider provider) {
+    public static User toUserEntity(String socialId, String nickname, EUserRole userRole, ELoginProvider provider) {
         return User.builder()
-                .email(email)
+                .socialId(socialId)
                 .nickname(nickname)
                 .userRole(userRole)
                 .provider(provider)
@@ -113,4 +113,9 @@ public class User {
         this.goalDistance = goalDistance;
     }
 
+    public Long getTotalDistance() {
+        return this.plogging.stream()
+                .mapToLong(Plogging::getDistance)
+                .sum();
+    }
 }
