@@ -55,6 +55,9 @@ public class Mission {
     @Column(name = "is_completed", nullable = false)
     private Boolean isCompleted;
 
+    @Column(name = "credit", nullable = false)
+    private Integer credit;
+
     //-------------------------------------------
 
     @ManyToOne(fetch = LAZY)
