@@ -15,9 +15,14 @@ public record PloggingDetailResponseDto(
         String trashCnt,  // 플로깅 총 쓰레기 개수
         String startedAt,    // 플로깅 시작 시간
         String endedAt,   // 플로깅 종료 시간
+        PloggingTeamInfoResponseDto ploggingTeamInfo,   // 플로깅 팀 정보
         List<PloggingImageDetailResponseDto> ploggingImageList  // 플로깅 이미지 리스트
 ) {
-    public static PloggingDetailResponseDto fromPloggingEntity(Plogging plogging, List<PloggingImage> ploggingImageList) {
+    public static PloggingDetailResponseDto fromPloggingEntity(
+            Plogging plogging,
+            List<PloggingImage> ploggingImageList,
+            PloggingTeamInfoResponseDto ploggingTeamInfo
+    ) {
         return PloggingDetailResponseDto.builder()
                 .ploggingId(plogging.getId().toString())
                 .distance(plogging.getDistance().toString())
@@ -25,6 +30,7 @@ public record PloggingDetailResponseDto(
                 .trashCnt(plogging.getPickUpCnt().toString())
                 .startedAt(plogging.getStartedAt().toString())
                 .endedAt(plogging.getEndedAt().toString())
+                .ploggingTeamInfo(ploggingTeamInfo)
                 .ploggingImageList(ploggingImageList.stream()
                         .map(PloggingImageDetailResponseDto::fromPloggingImageEntity)
                         .collect(Collectors.toList()))
