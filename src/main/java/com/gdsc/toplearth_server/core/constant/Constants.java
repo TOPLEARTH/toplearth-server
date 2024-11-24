@@ -18,6 +18,10 @@ public final class Constants {
             "/api/v1/test/signin/{name}",
 
             "/api/v1/auth/login/kakao",
-            "/api/v1/auth/login/apple"
+            "/api/v1/auth/login/apple",
+
+            "/ws",
+            "/ws-stomp",
+            "/ws-stomp/message/connect"
     );
 }
