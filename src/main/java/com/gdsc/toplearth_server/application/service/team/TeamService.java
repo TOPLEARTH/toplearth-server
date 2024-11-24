@@ -140,7 +140,7 @@ public class TeamService {
     }
 
     //팀 팀원 강퇴
-    public Boolean deleteTeamMember(Long teamId, Long memberId, UUID userId) {
+    public void deleteTeamMember(Long teamId, Long memberId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -154,12 +154,10 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         membersRepository.delete(member);
-
-        return true;
     }
 
     //팀 나가기
-    public Boolean deleteTeam(Long teamId, UUID userId) {
+    public void deleteTeam(Long teamId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -170,8 +168,6 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         membersRepository.delete(member);
-
-        return true;
     }
 
     //팀 생성
@@ -201,7 +197,7 @@ public class TeamService {
     }
 
     //팀 참여
-    public Boolean joinTeam(Long teamId, UUID userId) {
+    public void joinTeam(Long teamId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -214,8 +210,6 @@ public class TeamService {
 
         Member member = Member.toMemberEntity(ETeamRole.MEMBER, user, team);
         membersRepository.save(member);
-
-        return true;
     }
 
     //팀 코드 생성기
