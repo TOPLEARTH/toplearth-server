@@ -37,18 +37,13 @@ public class BootstrapService {
         UserInfoResponseDto userInfoResponseDto = UserInfoResponseDto.fromUserEntity(user);
 
         List<Mission> dailyQuestList = missionRepositoryImpl.findByUserAndMissionType(user, EMissionType.DAILY);
-        List<Mission> monthlyQuestList = missionRepositoryImpl.findByUserAndMissionType(user, EMissionType.MONTH);
 
         List<QuestDetailResponseDto> dailyQuestDtoList = dailyQuestList.stream()
                 .map(QuestDetailResponseDto::fromMissionEntity)
                 .toList();
-        List<QuestDetailResponseDto> monthlyQuestDtoList = monthlyQuestList.stream()
-                .map(QuestDetailResponseDto::fromMissionEntity)
-                .toList();
 
         QuestInfoResponseDto questInfoResponseDto = QuestInfoResponseDto.fromEntityList(
-                dailyQuestDtoList,
-                monthlyQuestDtoList
+                dailyQuestDtoList
         );
 
         List<PloggingDetailResponseDto> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user).stream()
