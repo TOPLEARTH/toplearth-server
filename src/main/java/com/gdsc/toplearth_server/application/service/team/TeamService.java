@@ -4,6 +4,7 @@ import com.gdsc.toplearth_server.application.dto.team.CreateTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamListInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamCodeResponseDto;
@@ -101,16 +102,17 @@ public class TeamService {
 
     //팀목록 검색
     @Transactional(readOnly = true)
-    public List<ReadTeamInfoResponseDto> searchTeam(String searchName) {
+    public ReadTeamListInfoResponseDto searchTeam(String searchName) {
         List<Team> teams = teamsRepository.findByNameContaining(searchName);
 
         if (teams.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_TEAM);
         }
-
-        return teams.stream()
+        List<ReadTeamInfoResponseDto> teamList = teams.stream()
                 .map(ReadTeamInfoResponseDto::of)
                 .collect(Collectors.toList());
+
+        return ReadTeamListInfoResponseDto.fromTeamDtoList(teamList);
     }
 
     //팀 이름 업데이트
