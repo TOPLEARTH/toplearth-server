@@ -8,7 +8,8 @@ import lombok.Builder;
 public record PloggingInfoResponseDto(
         List<PloggingDetailResponseDto> ploggingList
 ) {
-    public static PloggingInfoResponseDto fromPloggingDetailResponseDtoList(List<PloggingDetailResponseDto> ploggingList) {
+    public static PloggingInfoResponseDto fromPloggingDetailResponseDtoList(
+            List<PloggingDetailResponseDto> ploggingList) {
         return PloggingInfoResponseDto.builder()
                 .ploggingList(ploggingList)
                 .build();

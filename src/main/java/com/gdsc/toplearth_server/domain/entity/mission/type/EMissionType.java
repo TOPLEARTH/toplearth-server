@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum EMissionType {
-    DAILY("DAILY"),
-    MONTH("MONTH");
+    DAILY("DAILY");
 
     private final String missionType;
 }

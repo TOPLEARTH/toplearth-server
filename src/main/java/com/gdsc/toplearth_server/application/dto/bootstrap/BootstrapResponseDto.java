@@ -10,17 +10,20 @@ import lombok.Builder;
 public record BootstrapResponseDto(
         UserInfoResponseDto userInfo,
         QuestInfoResponseDto questInfo,
-        PloggingInfoResponseDto ploggingInfo
+        PloggingInfoResponseDto ploggingInfo,
+        LegacyInfoResponseDto legacyInfo
 ) {
     public static BootstrapResponseDto of(
             UserInfoResponseDto userInfo,
             QuestInfoResponseDto questInfo,
-            PloggingInfoResponseDto ploggingInfo
+            PloggingInfoResponseDto ploggingInfo,
+            LegacyInfoResponseDto legacyInfo
     ) {
         return BootstrapResponseDto.builder()
                 .userInfo(userInfo)
                 .questInfo(questInfo)
                 .ploggingInfo(ploggingInfo)
+                .legacyInfo(legacyInfo)
                 .build();
     }
 }

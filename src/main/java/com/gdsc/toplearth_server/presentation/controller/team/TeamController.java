@@ -63,7 +63,8 @@ public class TeamController {
             @PathVariable(name = "memberId", required = false) Long memberId,
             @UserId UUID userId
     ) {
-        return CommonResponseDto.ok(teamService.deleteTeamMember(teamId, memberId, userId));
+        teamService.deleteTeamMember(teamId, memberId, userId);
+        return CommonResponseDto.ok(null);
     }
 
     //팀 나가기
@@ -72,7 +73,8 @@ public class TeamController {
             @PathVariable(name = "teamId", required = false) Long teamId,
             @UserId UUID userId
     ) {
-        return CommonResponseDto.ok(teamService.deleteTeam(teamId, userId));
+        teamService.deleteTeam(teamId, userId);
+        return CommonResponseDto.ok(null);
     }
 
     //팀생성
@@ -90,6 +92,7 @@ public class TeamController {
             @PathVariable(name = "teamId", required = false) Long teamId,
             @UserId UUID userId
     ) {
-        return CommonResponseDto.ok(teamService.joinTeam(teamId, userId));
+        teamService.joinTeam(teamId, userId);
+        return CommonResponseDto.ok(null);
     }
 }

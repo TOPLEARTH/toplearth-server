@@ -9,6 +9,7 @@ public record QuestDetailResponseDto(
         String questId, // 퀘스트 ID
         String title,   // 퀘스트 제목
         String target,    // 퀘스트 목표
+        String questCredit, // 퀘스트 크레딧
         String currentProgress,  // 현재 진행 상황
         Boolean isCompleted,    // 퀘스트 완료 여부
         String progressRate, // 퀘스트 진행률
@@ -20,6 +21,7 @@ public record QuestDetailResponseDto(
                 .questId(questDetail.getId().toString())
                 .title(questDetail.getMissionName().toString())
                 .target(questDetail.getTarget().toString())
+                .questCredit(questDetail.getCredit().toString())
                 .currentProgress(questDetail.getCurrent().toString())
                 .isCompleted(questDetail.getIsCompleted())
                 .progressRate(questDetail.getProgressRate().toString())

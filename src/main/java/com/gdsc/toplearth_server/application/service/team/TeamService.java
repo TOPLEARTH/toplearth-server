@@ -4,6 +4,7 @@ import com.gdsc.toplearth_server.application.dto.team.CreateTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamListInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamCodeResponseDto;
@@ -101,16 +102,17 @@ public class TeamService {
 
     //팀목록 검색
     @Transactional(readOnly = true)
-    public List<ReadTeamInfoResponseDto> searchTeam(String searchName) {
+    public ReadTeamListInfoResponseDto searchTeam(String searchName) {
         List<Team> teams = teamsRepository.findByNameContaining(searchName);
 
         if (teams.isEmpty()) {
             throw new CustomException(ErrorCode.NOT_FOUND_TEAM);
         }
-
-        return teams.stream()
+        List<ReadTeamInfoResponseDto> teamList = teams.stream()
                 .map(ReadTeamInfoResponseDto::of)
                 .collect(Collectors.toList());
+
+        return ReadTeamListInfoResponseDto.fromTeamDtoList(teamList);
     }
 
     //팀 이름 업데이트
@@ -138,7 +140,7 @@ public class TeamService {
     }
 
     //팀 팀원 강퇴
-    public Boolean deleteTeamMember(Long teamId, Long memberId, UUID userId) {
+    public void deleteTeamMember(Long teamId, Long memberId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -152,12 +154,10 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         membersRepository.delete(member);
-
-        return true;
     }
 
     //팀 나가기
-    public Boolean deleteTeam(Long teamId, UUID userId) {
+    public void deleteTeam(Long teamId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -168,8 +168,6 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
 
         membersRepository.delete(member);
-
-        return true;
     }
 
     //팀 생성
@@ -199,7 +197,7 @@ public class TeamService {
     }
 
     //팀 참여
-    public Boolean joinTeam(Long teamId, UUID userId) {
+    public void joinTeam(Long teamId, UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -212,8 +210,6 @@ public class TeamService {
 
         Member member = Member.toMemberEntity(ETeamRole.MEMBER, user, team);
         membersRepository.save(member);
-
-        return true;
     }
 
     //팀 코드 생성기
