@@ -15,12 +15,12 @@ public record PloggingImageDetailResponseDto(
 ) {
     public static PloggingImageDetailResponseDto fromPloggingImageEntity(PloggingImage ploggingImage) {
         return PloggingImageDetailResponseDto.builder()
-                .ploggingImageId(ploggingImage.getId().toString())
+                .ploggingImageId(ploggingImage.getId() == null ? null : ploggingImage.getId().toString())
                 .imageUrl(ploggingImage.getImage())
-                .createdAt(ploggingImage.getCreatedAt().toString())
+                .createdAt(ploggingImage.getCreatedAt() == null ? null : ploggingImage.getCreatedAt().toString())
                 .latitude(ploggingImage.getLatitude().doubleValue())
                 .longitude(ploggingImage.getLongitude().doubleValue())
-                .label(ploggingImage.getELabel().toString())
+                .label(ploggingImage.getELabel() == null ? null : ploggingImage.getELabel().toString())
                 .build();
     }
 }

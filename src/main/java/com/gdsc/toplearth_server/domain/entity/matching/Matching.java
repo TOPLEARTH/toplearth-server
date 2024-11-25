@@ -32,22 +32,22 @@ public class Matching {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "competition_score", nullable = false)
     private Long competitionScore;
 
-    @Column(nullable = false)
+    @Column(name = "total_pick_up_cnt", nullable = false)
     private Integer totalPickUpCnt;
 
-    @Column(nullable = false)
+    @Column(name = "started_at", nullable = false)
     private LocalDateTime startedAt;
 
-    @Column
+    @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
-    @Column
+    @Column(name = "win_flag")
     private Boolean winFlag;
 
-    @Column(nullable = false)
+    @Column(name = "competition_status", nullable = false)
     private Boolean competitionStatus;
 
     //--------------------------------------
@@ -66,12 +66,12 @@ public class Matching {
     private List<Plogging> ploggings;
 
     @Builder
-    public Matching(String competitionScore, Integer totalPickUpCnt, LocalDateTime startedAt, LocalDateTime endedAt) {
+    public Matching(Team team, Team opponentTeam) {
         this.competitionScore = 0L;
         this.totalPickUpCnt = 0;
         this.startedAt = LocalDateTime.now();
         this.endedAt = null;
         this.winFlag = null;
-        this.competitionStatus = false;
+        this.competitionStatus = true;
     }
 }

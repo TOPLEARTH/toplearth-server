@@ -131,9 +131,9 @@ public class BootstrapService {
         }
 
         return PloggingTeamInfoResponseDto.fromPloggingTeamEntity(
-                team.get().getId().toString(),
+                team.get().getId(),
                 team.get().getName(),
-                opponentTeam.get().getId().toString(),
+                opponentTeam.get().getId(),
                 opponentTeam.get().getName()
         );
     }
@@ -192,7 +192,7 @@ public class BootstrapService {
         return projection.stream()
                 .map(regionRankProjection ->
                         RegionRankInfoResponseDto.of(
-                                regionRankProjection.getId().toString(),
+                                regionRankProjection.getId(),
                                 regionRankProjection.getName(),
                                 regionRankProjection.getTotalScore(),
                                 regionRankProjection.getRank()

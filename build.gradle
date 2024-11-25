@@ -31,8 +31,13 @@ dependencies {
     //파베
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 
-    //socket
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	//rabbitmq
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'io.projectreactor.netty:reactor-netty-core:1.1.11' // 예시: Spring Boot 3.3.4 기준
+	implementation 'io.projectreactor.netty:reactor-netty-http:1.1.11' // HTTP 모듈도 추가
+
+	//socket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
     //jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

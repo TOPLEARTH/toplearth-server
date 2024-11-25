@@ -9,10 +9,10 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record PloggingDetailResponseDto(
-        String ploggingId, // 플로깅 ID
-        String distance,    // 플로깅 총 이동거리
-        String duration,    // 플로깅 소요 시간
-        String trashCnt,  // 플로깅 총 쓰레기 개수
+        Long ploggingId, // 플로깅 ID
+        Double distance,    // 플로깅 총 이동거리
+        Long duration,    // 플로깅 소요 시간
+        Integer trashCnt,  // 플로깅 총 쓰레기 개수
         String startedAt,    // 플로깅 시작 시간
         String endedAt,   // 플로깅 종료 시간
         PloggingTeamInfoResponseDto ploggingTeamInfo,   // 플로깅 팀 정보
@@ -24,12 +24,12 @@ public record PloggingDetailResponseDto(
             PloggingTeamInfoResponseDto ploggingTeamInfo
     ) {
         return PloggingDetailResponseDto.builder()
-                .ploggingId(plogging.getId().toString())
-                .distance(plogging.getDistance().toString())
-                .duration(plogging.getDuration().toString())
-                .trashCnt(plogging.getPickUpCnt().toString())
-                .startedAt(plogging.getStartedAt().toString())
-                .endedAt(plogging.getEndedAt().toString())
+                .ploggingId(plogging.getId())
+                .distance(plogging.getDistance().doubleValue())
+                .duration(plogging.getDuration())
+                .trashCnt(plogging.getPickUpCnt())
+                .startedAt(plogging.getStartedAt() == null ? null : plogging.getStartedAt().toString())
+                .endedAt(plogging.getEndedAt() == null ? null : plogging.getEndedAt().toString())
                 .ploggingTeamInfo(ploggingTeamInfo)
                 .ploggingImageList(ploggingImageList.stream()
                         .map(PloggingImageDetailResponseDto::fromPloggingImageEntity)

@@ -5,12 +5,12 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PROTECTED)
 public record RegionRankInfoResponseDto(
-        String regionId,
+        Long regionId,
         String regionName,
-        String score,
-        String ranking
+        Long score,
+        Integer ranking
 ) {
-    public static RegionRankInfoResponseDto of(String regionId, String regionName, String score, String ranking) {
+    public static RegionRankInfoResponseDto of(Long regionId, String regionName, Long score, Integer ranking) {
         return RegionRankInfoResponseDto.builder()
                 .regionId(regionId)
                 .regionName(regionName)

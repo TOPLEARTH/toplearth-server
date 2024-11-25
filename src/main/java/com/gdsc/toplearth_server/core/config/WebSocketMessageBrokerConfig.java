@@ -3,6 +3,7 @@ package com.gdsc.toplearth_server.core.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -20,7 +21,12 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
-        registry.setApplicationDestinationPrefixes("/message");
+        registry.setPathMatcher(new AntPathMatcher(".")); // URL / -> .
+        registry.setApplicationDestinationPrefixes("/pub");  //  @MessageMapping 메서드로 라우팅 Client에서 SEND 요청 처리
+        registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
+                .setRelayHost("localhost") // RabbitMQ 호스트
+                .setRelayPort(61613)       // RabbitMQ의 STOMP 포트
+                .setClientLogin("toplearth") // RabbitMQ 사용자
+                .setClientPasscode("qwer1234!@"); // RabbitMQ 비밀번호
     }
 }

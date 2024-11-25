@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,11 +34,11 @@ public class PloggingImage {
     @Enumerated(EnumType.STRING)
     private ELabel eLabel;
 
-    @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal latitude;
+    @Column(nullable = false)
+    private Double latitude;
 
-    @Column(nullable = false, precision = 9, scale = 6)
-    private BigDecimal longitude;
+    @Column(nullable = false)
+    private Double longitude;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

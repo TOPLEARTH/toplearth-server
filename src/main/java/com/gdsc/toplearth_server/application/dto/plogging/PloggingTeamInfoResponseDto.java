@@ -5,13 +5,13 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record PloggingTeamInfoResponseDto(
-        String teamId, // 팀 ID
+        Long teamId, // 팀 ID
         String teamName, // 팀 이름
-        String opponentTeamId, // 상대 팀 ID
+        Long opponentTeamId, // 상대 팀 ID
         String opponentTeamName // 상대 팀 이름
 ) {
-    public static PloggingTeamInfoResponseDto fromPloggingTeamEntity(String teamId, String teamName,
-                                                                     String opponentTeamId, String opponentTeamName) {
+    public static PloggingTeamInfoResponseDto fromPloggingTeamEntity(Long teamId, String teamName,
+                                                                     Long opponentTeamId, String opponentTeamName) {
         return PloggingTeamInfoResponseDto.builder()
                 .teamId(teamId)
                 .teamName(teamName)

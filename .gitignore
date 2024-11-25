@@ -40,3 +40,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.env
+toplearth-b90be-firebase-adminsdk-c3gu7-a8cb5e75c1.json

@@ -9,9 +9,9 @@ public record UserInfoResponseDto(
         String userId,  // 유저 UUID
         String socialId,   // 유저 소셜 아이디
         String nickname,    // 유저 닉네임
-        String totalKilometers,  // 유저 총 이동거리
-        String targetKilometers, // 유저 목표 이동거리
-        String creditInfo,  // 유저 크레딧 정보
+        Double totalKilometers,  // 유저 총 이동거리
+        Double targetKilometers, // 유저 목표 이동거리
+        Integer creditInfo,  // 유저 크레딧 정보
         Boolean isJoinedTeam  // 유저 팀 가입 여부
 ) {
     public static UserInfoResponseDto fromUserEntity(User user) {
@@ -19,9 +19,9 @@ public record UserInfoResponseDto(
                 .userId(user.getId().toString())
                 .socialId(user.getSocialId())
                 .nickname(user.getNickname())
-                .totalKilometers(user.getTotalDistance().toString())
-                .targetKilometers(user.getGoalDistance().toString())
-                .creditInfo(user.getCredit().toString())
+                .totalKilometers(user.getTotalDistance())
+                .targetKilometers(user.getGoalDistance().doubleValue())
+                .creditInfo(user.getCredit())
                 .isJoinedTeam(user.checkJoinedTeam())
                 .build();
     }

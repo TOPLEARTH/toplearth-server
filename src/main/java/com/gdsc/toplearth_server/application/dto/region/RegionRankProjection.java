@@ -5,7 +5,7 @@ public interface RegionRankProjection {
 
     String getName();
 
-    String getTotalScore();
+    Long getTotalScore();
 
-    String getRank();
+    Integer getRank();
 }

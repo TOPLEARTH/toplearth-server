@@ -32,8 +32,8 @@ public class Plogging {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 5, scale = 3)
-    private Long distance;
+    @Column(nullable = false)
+    private Double distance;
 
     @Column
     private Integer pickUpCnt;

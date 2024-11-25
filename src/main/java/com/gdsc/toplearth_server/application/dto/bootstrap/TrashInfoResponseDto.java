@@ -7,27 +7,27 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record TrashInfoResponseDto(
-        String plastic, // 플라스틱
-        String foodWaste, // 음식물
-        String glassBottle, // 유리병
-        String cigaretteButt, // 담배꽁초
-        String paper, // 종이류
-        String disposableContainer, // 일회용 용기
-        String can, // 캔
-        String plasticBag, // 비닐봉지
-        String others // 기타
+        Long plastic, // 플라스틱
+        Long foodWaste, // 음식물
+        Long glassBottle, // 유리병
+        Long cigaretteButt, // 담배꽁초
+        Long paper, // 종이류
+        Long disposableContainer, // 일회용 용기
+        Long can, // 캔
+        Long plasticBag, // 비닐봉지
+        Long others // 기타
 ) {
     public static TrashInfoResponseDto fromTrashCountMap(Map<ELabel, Long> trashCountMap) {
         return TrashInfoResponseDto.builder()
-                .plastic(String.valueOf(trashCountMap.getOrDefault(ELabel.PLASTIC, 0L)))
-                .foodWaste(String.valueOf(trashCountMap.getOrDefault(ELabel.FOOD_WASTE, 0L)))
-                .glassBottle(String.valueOf(trashCountMap.getOrDefault(ELabel.GLASS, 0L)))
-                .cigaretteButt(String.valueOf(trashCountMap.getOrDefault(ELabel.CIGARETTE, 0L)))
-                .paper(String.valueOf(trashCountMap.getOrDefault(ELabel.PAPER, 0L)))
-                .disposableContainer(String.valueOf(trashCountMap.getOrDefault(ELabel.GENERAL, 0L)))
-                .can(String.valueOf(trashCountMap.getOrDefault(ELabel.CAN, 0L)))
-                .plasticBag(String.valueOf(trashCountMap.getOrDefault(ELabel.PLASTIC_BAG, 0L)))
-                .others(String.valueOf(trashCountMap.getOrDefault(ELabel.OTHERS, 0L)))
+                .plastic(trashCountMap.getOrDefault(ELabel.PLASTIC, 0L))
+                .foodWaste(trashCountMap.getOrDefault(ELabel.FOOD_WASTE, 0L))
+                .glassBottle(trashCountMap.getOrDefault(ELabel.GLASS, 0L))
+                .cigaretteButt(trashCountMap.getOrDefault(ELabel.CIGARETTE, 0L))
+                .paper(trashCountMap.getOrDefault(ELabel.PAPER, 0L))
+                .disposableContainer(trashCountMap.getOrDefault(ELabel.GENERAL, 0L))
+                .can(trashCountMap.getOrDefault(ELabel.CAN, 0L))
+                .plasticBag(trashCountMap.getOrDefault(ELabel.PLASTIC_BAG, 0L))
+                .others(trashCountMap.getOrDefault(ELabel.OTHERS, 0L))
                 .build();
     }
 }

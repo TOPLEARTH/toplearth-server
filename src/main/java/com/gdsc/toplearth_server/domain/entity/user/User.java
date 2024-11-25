@@ -19,7 +19,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -45,8 +44,8 @@ public class User {
     @Column(name = "nickname", length = 20)
     private String nickname;
 
-    @Column(name = "goal_distance", precision = 5, scale = 3)
-    private BigDecimal goalDistance;
+    @Column(name = "goal_distance")
+    private Double goalDistance;
 
     @Column(name = "user_role", nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
@@ -95,7 +94,7 @@ public class User {
     public User(String socialId, String nickname, EUserRole userRole, ELoginProvider provider, String fcmToken) {
         this.socialId = socialId;
         this.nickname = nickname;
-        this.goalDistance = BigDecimal.ZERO;
+        this.goalDistance = 0.0;
         this.userRole = userRole;
         this.provider = provider;
         this.fcmToken = fcmToken;
@@ -115,13 +114,13 @@ public class User {
                 .build();
     }
 
-    public void updateGoal(BigDecimal goalDistance) {
+    public void updateGoal(Double goalDistance) {
         this.goalDistance = goalDistance;
     }
 
-    public Long getTotalDistance() {
+    public double getTotalDistance() {
         return this.plogging.stream()
-                .mapToLong(Plogging::getDistance)
+                .mapToDouble(Plogging::getDistance)
                 .sum();
     }
 
