@@ -43,17 +43,19 @@ public class TeamController {
     @PatchMapping("/{teamId}/name")
     public CommonResponseDto<?> updateTeamName(
             @PathVariable Long teamId,
-            @Valid @RequestBody UpdateTeamNameRequestDto updateTeamNameRequestDto
+            @Valid @RequestBody UpdateTeamNameRequestDto updateTeamNameRequestDto,
+            @UserId UUID userId
     ) {
-        return CommonResponseDto.ok(teamService.updateTeamName(teamId, updateTeamNameRequestDto));
+        return CommonResponseDto.ok(teamService.updateTeamName(teamId, updateTeamNameRequestDto, userId));
     }
 
     //팀 코드 변경
     @PatchMapping("/{teamId}/code")
     public CommonResponseDto<?> updateTeamCode(
-            @PathVariable Long teamId
+            @PathVariable Long teamId,
+            @UserId UUID userId
     ) {
-        return CommonResponseDto.ok(teamService.updateTeamCode(teamId));
+        return CommonResponseDto.ok(teamService.updateTeamCode(teamId, userId));
     }
 
     //팀 팀원 강퇴

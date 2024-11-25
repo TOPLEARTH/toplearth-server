@@ -116,9 +116,17 @@ public class TeamService {
     }
 
     //팀 이름 업데이트
-    public UpdateTeamNameResponseDto updateTeamName(Long teamId, UpdateTeamNameRequestDto updateTeamNameRequestDto) {
+    public UpdateTeamNameResponseDto updateTeamName(Long teamId, UpdateTeamNameRequestDto updateTeamNameRequestDto,
+                                                    UUID userId) {
         Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        if (!user.getMember().getETeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER);
+        }
 
         team.updateName(updateTeamNameRequestDto.teamName());
 
@@ -128,9 +136,16 @@ public class TeamService {
     }
 
     //팀 코드 업데이트
-    public UpdateTeamCodeResponseDto updateTeamCode(Long teamId) {
+    public UpdateTeamCodeResponseDto updateTeamCode(Long teamId, UUID userId) {
         Team team = teamsRepository.findById(teamId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        if (!user.getMember().getETeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER);
+        }
 
         team.updateCode(codeGenerator());
 
