@@ -84,7 +84,7 @@ public class BootstrapService {
         Map<ELabel, Long> trashCountMap = new HashMap<>();
 
         for (Object[] row : labelCounts) {
-            ELabel label = (ELabel) row[0];
+            ELabel label = ELabel.valueOf((String) row[0]); // 네이티브 쿼리로 조회한 값은 String 타입
             Long count = (Long) row[1];
             trashCountMap.put(label, count);
         }
