@@ -33,8 +33,8 @@ dependencies {
 
 	//rabbitmq
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
-	implementation 'io.projectreactor.netty:reactor-netty-core:1.1.11' // 예시: Spring Boot 3.3.4 기준
-	implementation 'io.projectreactor.netty:reactor-netty-http:1.1.11' // HTTP 모듈도 추가
+    implementation 'org.springframework.boot:spring-boot-starter-reactor-netty:3.2.3'
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.113.Final:osx-aarch_64'
 
 	//socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'

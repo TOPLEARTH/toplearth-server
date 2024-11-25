@@ -1,6 +1,7 @@
 package com.gdsc.toplearth_server.core.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.AntPathMatcher;
@@ -13,6 +14,18 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
 
+    @Value("${spring.rabbitmq.host}")
+    private String host;
+
+    @Value("${spring.rabbitmq.port}")
+    private Integer stompPort;
+
+    @Value("${spring.rabbitmq.username}")
+    private String username;
+
+    @Value("${spring.rabbitmq.password}")
+    private String password;
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
@@ -24,9 +37,11 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
         registry.setPathMatcher(new AntPathMatcher(".")); // URL / -> .
         registry.setApplicationDestinationPrefixes("/pub");  //  @MessageMapping 메서드로 라우팅 Client에서 SEND 요청 처리
         registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
-                .setRelayHost("localhost") // RabbitMQ 호스트
-                .setRelayPort(61613)       // RabbitMQ의 STOMP 포트
-                .setClientLogin("toplearth") // RabbitMQ 사용자
-                .setClientPasscode("qwer1234!@"); // RabbitMQ 비밀번호
+                .setRelayHost(host) // RabbitMQ 호스트
+                .setRelayPort(stompPort)       // RabbitMQ의 STOMP 포트
+                .setSystemLogin(username) // RabbitMQ 시스템 사용자
+                .setSystemPasscode(password) // RabbitMQ 시스템 비밀번호
+                .setClientLogin(username)
+                .setClientPasscode(password);
     }
 }
