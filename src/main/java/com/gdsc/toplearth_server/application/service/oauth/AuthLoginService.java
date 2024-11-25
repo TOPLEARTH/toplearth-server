@@ -32,7 +32,8 @@ public class AuthLoginService {
         User user = userRepositoryImpl.findBySocialId(OAuth2UserInfo.oAuthId())
                 .orElseGet(() -> joinUser(
                         OAuth2UserInfo,
-                        ELoginProvider.KAKAO
+                        ELoginProvider.KAKAO,
+                        fcmToken
                 ));
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
@@ -46,18 +47,21 @@ public class AuthLoginService {
         User user = userRepositoryImpl.findBySocialId(OAuth2UserInfo.oAuthId())
                 .orElseGet(() -> joinUser(
                         OAuth2UserInfo,
-                        ELoginProvider.APPLE
+                        ELoginProvider.APPLE,
+                        fcmToken
                 ));
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
 
-    private User joinUser(OAuth2UserInfoResponseDto OAuth2UserInfo, ELoginProvider provider) {
+    private User joinUser(OAuth2UserInfoResponseDto OAuth2UserInfo, ELoginProvider provider, String fcmToken) {
         return userRepositoryImpl.save(
                 User.toUserEntity(
                         OAuth2UserInfo.oAuthId(),
                         NicknameUtil.generateRandomNickname(),
                         EUserRole.USER,
-                        provider
+                        provider,
+                        fcmToken
+
                 )
         );
     }

@@ -19,7 +19,7 @@ public record ReadUserResponseDto(
                 //.email(user.getEmail())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImageUrl())
-                .eTeamRole(user.getMember() != null ? user.getMember().getETeamRole() : null)
+                .eTeamRole(user.getMember() != null ? user.getMember().getTeamRole() : null)
                 .build();
     }
 }

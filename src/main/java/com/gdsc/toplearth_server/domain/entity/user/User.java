@@ -62,6 +62,9 @@ public class User {
     @Column(name = "refresh_token")
     private String refreshToken;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @Column(name = "credit")
     @ColumnDefault("0")
     private Integer credit;
@@ -89,23 +92,26 @@ public class User {
     //--------------------------------------------------
 
     @Builder(access = AccessLevel.PRIVATE)
-    public User(String socialId, String nickname, EUserRole userRole, ELoginProvider provider) {
+    public User(String socialId, String nickname, EUserRole userRole, ELoginProvider provider, String fcmToken) {
         this.socialId = socialId;
         this.nickname = nickname;
         this.goalDistance = BigDecimal.ZERO;
         this.userRole = userRole;
         this.provider = provider;
+        this.fcmToken = fcmToken;
         this.profileImageUrl = null;
         this.refreshToken = null;
         this.credit = 0;
     }
 
-    public static User toUserEntity(String socialId, String nickname, EUserRole userRole, ELoginProvider provider) {
+    public static User toUserEntity(String socialId, String nickname, EUserRole userRole, ELoginProvider provider,
+                                    String fcmToken) {
         return User.builder()
                 .socialId(socialId)
                 .nickname(nickname)
                 .userRole(userRole)
                 .provider(provider)
+                .fcmToken(fcmToken)
                 .build();
     }
 

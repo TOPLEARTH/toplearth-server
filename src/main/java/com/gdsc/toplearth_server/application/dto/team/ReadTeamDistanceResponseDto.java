@@ -15,7 +15,7 @@ public record ReadTeamDistanceResponseDto(
         return ReadTeamDistanceResponseDto.builder()
                 .id(member.getId())
                 .name(member.getUser().getNickname())
-                .role(member.getETeamRole())
+                .role(member.getTeamRole())
                 .distance(distance)
                 .build();
     }

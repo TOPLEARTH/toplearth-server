@@ -14,7 +14,7 @@ public record ReadTeamMemberResponseDto(
         return ReadTeamMemberResponseDto.builder()
                 .memberId(member.getId())
                 .nickname(member.getUser().getNickname())
-                .eTeamRole(member.getETeamRole())
+                .eTeamRole(member.getTeamRole())
                 .build();
     }
 }

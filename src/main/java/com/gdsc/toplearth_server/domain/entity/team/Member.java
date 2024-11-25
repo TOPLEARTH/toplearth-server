@@ -32,7 +32,7 @@ public class Member {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private ETeamRole eTeamRole;
+    private ETeamRole teamRole;
 
     @Column(nullable = false)
     private LocalDateTime joinedAt;
@@ -53,7 +53,7 @@ public class Member {
 
     @Builder
     public Member(ETeamRole eTeamRole, User user, Team team) {
-        this.eTeamRole = eTeamRole;
+        this.teamRole = eTeamRole;
         this.joinedAt = LocalDateTime.now();
         this.team = team;
         this.user = user;

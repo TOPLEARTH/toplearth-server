@@ -20,7 +20,7 @@ public class TestService {
     private final JwtUtil jwtUtil;
 
     public JwtDto signIn(String username, EUserRole role) {
-        User user = User.toUserEntity(username, "test", EUserRole.USER, ELoginProvider.NAVER);
+        User user = User.toUserEntity(username, "test", EUserRole.USER, ELoginProvider.NAVER, "1234");
 
         userRepository.save(user);
 
@@ -30,7 +30,7 @@ public class TestService {
     }
 
     public JwtDto signInAdmin(String username, EUserRole role) {
-        User user = User.toUserEntity(username, "test", EUserRole.ADMIN, ELoginProvider.NAVER);
+        User user = User.toUserEntity(username, "test", EUserRole.ADMIN, ELoginProvider.NAVER, "asdf");
 
         userRepository.save(user);
 

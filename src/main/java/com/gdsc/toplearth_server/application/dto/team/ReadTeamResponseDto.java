@@ -12,7 +12,7 @@ public record ReadTeamResponseDto(
         String teamName,
         Integer matchCnt,
         Integer winCnt,
-        Map<YearMonth, ReadTeamStatisticsResponseDto> teamSelect
+        Map<YearMonth, ReadTeamStatisticsResponseDto> monthlyData
 ) {
     //of 메소드
     public static ReadTeamResponseDto of(Team team, Integer matchCnt, Integer winCnt,
@@ -23,7 +23,7 @@ public record ReadTeamResponseDto(
                 .teamName(team.getName())
                 .matchCnt(matchCnt)
                 .winCnt(winCnt)
-                .teamSelect(readTeamSelectResponseDtos)
+                .monthlyData(readTeamSelectResponseDtos)
                 .build();
     }
 }

@@ -9,6 +9,7 @@ import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamCodeResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamNameResponseDto;
+import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
@@ -46,6 +47,7 @@ public class TeamService {
     private final UserRepositoryImpl userRepository;
     private final MatchingRepositoryImpl matchingRepository;
     private final PloggingRepositoryImpl ploggingRepository;
+    private final FcmService fcmService;
 
     //팀 네비게이션 바 팀 정보 조회
     @Transactional(readOnly = true)
@@ -124,7 +126,7 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        if (!user.getMember().getETeamRole().equals(ETeamRole.LEADER)) {
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER);
         }
 
@@ -143,7 +145,7 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        if (!user.getMember().getETeamRole().equals(ETeamRole.LEADER)) {
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER);
         }
 
@@ -159,7 +161,7 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        if (user.getMember().getETeamRole().equals(ETeamRole.MEMBER)) {
+        if (user.getMember().getTeamRole().equals(ETeamRole.MEMBER)) {
             throw new CustomException(ErrorCode.ACCESS_DENIED_ERROR);
         }
 
@@ -222,6 +224,11 @@ public class TeamService {
         if (membersRepository.countByTeam(team) > 4) {
             throw new CustomException(ErrorCode.CONFLICT_TEAM_COUNT);
         }
+        Member leadMember = membersRepository.findByTeamRoleAndTeam(ETeamRole.LEADER, team)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
+        String token = leadMember.getUser().getFcmToken();
+
+        fcmService.sendMessage("가입 신청 문의", String.format("%s님이 가입신청을하였습니다.", user.getNickname()), token);
 
         Member member = Member.toMemberEntity(ETeamRole.MEMBER, user, team);
         membersRepository.save(member);
