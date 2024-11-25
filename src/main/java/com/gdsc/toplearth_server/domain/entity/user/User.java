@@ -118,4 +118,8 @@ public class User {
                 .mapToLong(Plogging::getDistance)
                 .sum();
     }
+
+    public boolean checkJoinedTeam() {
+        return this.member != null;
+    }
 }

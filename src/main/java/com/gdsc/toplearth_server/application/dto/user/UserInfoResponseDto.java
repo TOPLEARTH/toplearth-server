@@ -11,7 +11,8 @@ public record UserInfoResponseDto(
         String nickname,    // 유저 닉네임
         String totalKilometers,  // 유저 총 이동거리
         String targetKilometers, // 유저 목표 이동거리
-        String creditInfo  // 유저 크레딧 정보
+        String creditInfo,  // 유저 크레딧 정보
+        Boolean isJoinedTeam  // 유저 팀 가입 여부
 ) {
     public static UserInfoResponseDto fromUserEntity(User user) {
         return UserInfoResponseDto.builder()
@@ -21,6 +22,7 @@ public record UserInfoResponseDto(
                 .totalKilometers(user.getTotalDistance().toString())
                 .targetKilometers(user.getGoalDistance().toString())
                 .creditInfo(user.getCredit().toString())
+                .isJoinedTeam(user.checkJoinedTeam())
                 .build();
     }
 }
