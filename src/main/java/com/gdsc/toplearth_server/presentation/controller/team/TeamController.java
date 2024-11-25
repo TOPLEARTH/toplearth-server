@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeamController {
     private final TeamService teamService;
 
-    @GetMapping("")
-    public CommonResponseDto<?> teamInfo(
-            @UserId UUID userId
-    ) {
-        return CommonResponseDto.ok(teamService.readTeam(userId));
-    }
+//    @GetMapping("")
+//    public CommonResponseDto<?> teamInfo(
+//            @UserId UUID userId
+//    ) {
+//        return CommonResponseDto.ok(teamService.readTeam(userId));
+//    }
 
     //팀 검색
     @GetMapping("/search")

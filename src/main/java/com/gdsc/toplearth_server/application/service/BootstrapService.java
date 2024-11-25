@@ -8,24 +8,37 @@ import com.gdsc.toplearth_server.application.dto.mission.QuestInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingDetailResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingTeamInfoResponseDto;
+import com.gdsc.toplearth_server.application.dto.region.RegionRankInfoResponseDto;
+import com.gdsc.toplearth_server.application.dto.region.RegionRankProjection;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
 import com.gdsc.toplearth_server.application.dto.user.UserInfoResponseDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.mission.Mission;
 import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionType;
+import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
 import com.gdsc.toplearth_server.domain.entity.plogging.type.ELabel;
+import com.gdsc.toplearth_server.domain.entity.team.Member;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
+import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.mission.MissionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,9 +50,13 @@ public class BootstrapService {
     private final MissionRepositoryImpl missionRepositoryImpl;
     private final PloggingRepositoryImpl ploggingRepositoryImpl;
     private final PloggingImagesRepositoryImpl ploggingImagesRepositoryImpl;
+    private final MatchingRepositoryImpl matchingRepositoryImpl;
+    private final MemberRepositoryImpl memberRepositoryImpl;
+    private final RegionRepositoryImpl regionRepositoryImpl;
 
     @Transactional(readOnly = true)
     public BootstrapResponseDto bootstrap(UUID userId) {
+        System.err.println(userId);
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
         UserInfoResponseDto userInfoResponseDto = UserInfoResponseDto.fromUserEntity(user);
@@ -53,6 +70,8 @@ public class BootstrapService {
         QuestInfoResponseDto questInfoResponseDto = QuestInfoResponseDto.fromEntityList(
                 dailyQuestDtoList
         );
+
+        ReadTeamResponseDto readTeamResponseDto = getReadTeam(user);
 
         List<PloggingDetailResponseDto> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user).stream()
                 .map(plogging -> {
@@ -70,11 +89,15 @@ public class BootstrapService {
 
         LegacyInfoResponseDto legacyInfoResponseDto = getLegacyInfo();
 
+        List<RegionRankInfoResponseDto> regionRankInfoResponseDtos = getRegionRankInfo();
+
         return BootstrapResponseDto.of(
                 userInfoResponseDto,
                 questInfoResponseDto,
+                readTeamResponseDto,
                 ploggingInfoResponseDto,
-                legacyInfoResponseDto
+                legacyInfoResponseDto,
+                regionRankInfoResponseDtos
         );
     }
 
@@ -113,5 +136,68 @@ public class BootstrapService {
                 opponentTeam.get().getId().toString(),
                 opponentTeam.get().getName()
         );
+    }
+
+    private ReadTeamResponseDto getReadTeam(User user) {
+        Team team = user.getMember().getTeam(); // 그 해당하는 유저의 팀을 찾는다.
+
+        Integer matchCnt = matchingRepositoryImpl.countByTeam(team); // 유저가 속한 팀의 매치 횟수
+        Integer winCnt = matchingRepositoryImpl.countByTeamAndWinFlagIsTrue(team); // 유저가 속한 팀의 승리횟수
+
+        List<Member> members = memberRepositoryImpl.findByTeam(team); // 그 유저가 속한 팀의 모든 멤버들을 조회한다. //멤버 정보에 사용할 예정
+
+        List<Plogging> ploggingList = ploggingRepositoryImpl.findByYearAndTeam(team.getCreatedAt().getYear(),
+                team); // 플로깅을 시작한 연도와 유저의 팀을 기준으로 플로깅 정보를 불러온다.
+
+        Map<YearMonth, ReadTeamStatisticsResponseDto> memberMonthlyDataMap = ploggingList.stream()
+                .collect(Collectors.groupingBy(
+                        plogging -> YearMonth.from(plogging.getStartedAt()),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                ploggings -> {
+                                    List<ReadTeamDistanceResponseDto> selectResponseDtos = members.stream()
+                                            .map(member -> ReadTeamDistanceResponseDto.of(
+                                                    member,
+                                                    ploggings.stream()
+                                                            .filter(p -> p.getUser().equals(member.getUser()))
+                                                            .mapToDouble(Plogging::getDistance)
+                                                            .sum()
+                                            ))
+                                            .collect(Collectors.toList());
+
+                                    Map<ELabel, Long> labelCounts = ploggings.stream()
+                                            .flatMap(plogging -> plogging.getPloggingImages().stream())
+                                            .collect(Collectors.groupingBy(
+                                                    PloggingImage::getELabel,
+                                                    Collectors.counting()
+                                            ));
+
+                                    List<ReadTeamLabelResponseDto> readLabelResponseDtos = labelCounts.entrySet()
+                                            .stream()
+                                            .map(entry -> new ReadTeamLabelResponseDto(entry.getKey(),
+                                                    entry.getValue().intValue()))
+                                            .collect(Collectors.toList());
+
+                                    return new ReadTeamStatisticsResponseDto(selectResponseDtos, readLabelResponseDtos);
+                                }
+                        )
+                ));
+
+        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberMonthlyDataMap);
+    }
+
+    public List<RegionRankInfoResponseDto> getRegionRankInfo() {
+        List<RegionRankProjection> projection = regionRepositoryImpl.findAllWithRank();
+
+        return projection.stream()
+                .map(regionRankProjection ->
+                        RegionRankInfoResponseDto.of(
+                                regionRankProjection.getId().toString(),
+                                regionRankProjection.getName(),
+                                regionRankProjection.getTotalScore(),
+                                regionRankProjection.getRank()
+                        )
+                )
+                .collect(Collectors.toList());
     }
 }
