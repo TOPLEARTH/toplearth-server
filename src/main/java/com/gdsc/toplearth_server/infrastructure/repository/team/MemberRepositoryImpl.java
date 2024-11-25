@@ -6,6 +6,7 @@ import com.gdsc.toplearth_server.domain.entity.user.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface MemberRepositoryImpl extends JpaRepository<Member, Long> {
     Optional<Member> findByIdAndTeam(Long memberId, Team team);
@@ -14,7 +15,8 @@ public interface MemberRepositoryImpl extends JpaRepository<Member, Long> {
 
     Integer countByTeam(Team team);
 
-    Boolean existsByUser(User user);
+    @Query("SELECT CASE WHEN COUNT(m.id) > 0 THEN true ELSE false END FROM Member m WHERE m.user = :user")
+    boolean existsByUser(User user);
 
     List<Member> findByTeam(Team team);
 }
