@@ -23,8 +23,8 @@ public class MatchingScheduler {    // 정각마다 매칭을 진행하는 스�
      * 매 정각마다 실행되는 매칭 스케줄러
      * cron 표현식: "0 0 * * * *" -> 매 정각(매 시 0분 0초)
      */
-    // @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
+    // @Scheduled(cron = "0 */3 * * * *")
     public void scheduleMatching() {
         log.info("Scheduled matching process started at {}", LocalDateTime.now());
 

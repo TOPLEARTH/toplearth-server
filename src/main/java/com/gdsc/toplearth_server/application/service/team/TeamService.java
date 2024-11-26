@@ -55,7 +55,10 @@ public class TeamService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER)); // 일단 user를 찾는다.
 
-        Team team = user.getMember().getTeam(); // 그 해당하는 유저의 팀을 찾는다.
+        Team team = user.getMember() != null ? user.getMember().getTeam() : null;
+        if (team == null) {
+            return null; // 유저가 팀이 없으면 null 반환
+        }
 
         Integer matchCnt = matchingRepository.countByTeam(team); // 유저가 속한 팀의 매치 횟수
         Integer winCnt = matchingRepository.countByTeamAndWinFlagIsTrue(team); // 유저가 속한 팀의 승리횟수
