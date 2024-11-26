@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -49,5 +50,30 @@ public class PloggingImage {
     @JoinColumn(name = "plogging_id", nullable = false)
     private Plogging plogging;
 
+    //-------------------------------------------
 
+    @Builder(access = AccessLevel.PRIVATE)
+    public PloggingImage(
+            Plogging plogging, String image,
+            Double latitude, Double longitude
+    ) {
+        this.plogging = plogging;
+        this.image = image;
+        this.eLabel = null;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public static PloggingImage createPloggingImage(
+            Plogging plogging, String image,
+            Double latitude, Double longitude
+    ) {
+        return PloggingImage.builder()
+                .plogging(plogging)
+                .image(image)
+                .latitude(latitude)
+                .longitude(longitude)
+                .build();
+    }
 }

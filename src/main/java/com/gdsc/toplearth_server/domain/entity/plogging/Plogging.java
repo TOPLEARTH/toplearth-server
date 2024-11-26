@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,7 +36,7 @@ public class Plogging {
     @Column(nullable = false)
     private Double distance;
 
-    @Column
+    @Column(nullable = false)
     private Integer pickUpCnt;
 
     @Column(nullable = false)
@@ -47,8 +48,11 @@ public class Plogging {
     @Column(nullable = false)
     private Long duration;
 
-    @Column(nullable = false, length = 2048)
+    @Column(length = 2048)
     private String image;
+
+    @Column(nullable = false)
+    private Integer burnedCalories;
 
     //-------------------------------------------
 
@@ -76,5 +80,49 @@ public class Plogging {
     @OneToMany(mappedBy = "plogging", cascade = CascadeType.MERGE)
     private List<Report> reports;
 
+    //-------------------------------------------
 
+    @Builder(access = AccessLevel.PRIVATE)
+    public Plogging(User user, Region region, Team team, Matching matching) {
+        this.distance = 0.0;
+        this.pickUpCnt = 0;
+        this.startedAt = LocalDateTime.now();
+        this.endedAt = null;
+        this.duration = 0L;
+        this.image = null;
+        this.burnedCalories = 0;
+        this.team = team;
+        this.matching = matching;
+        this.user = user;
+        this.region = region;
+    }
+
+    public static Plogging createUserPlogging(
+            User user, Region region,
+            Team team, Matching matching
+    ) {
+        return Plogging.builder()
+                .user(user)
+                .region(region)
+                .team(team)
+                .matching(matching)
+                .build();
+    }
+
+    public void updatePlogging(
+            Double distance, Integer pickUpCnt,
+            Long duration, String ploggingInfoImage,
+            Integer burnedCalories
+    ) {
+        this.distance = distance;
+        this.pickUpCnt = pickUpCnt;
+        this.endedAt = LocalDateTime.now();
+        this.duration = duration;
+        this.image = ploggingInfoImage;
+        this.burnedCalories = burnedCalories;
+    }
+
+    public void addPloggingImage(PloggingImage ploggingImage) {
+        this.ploggingImages.add(ploggingImage);
+    }
 }

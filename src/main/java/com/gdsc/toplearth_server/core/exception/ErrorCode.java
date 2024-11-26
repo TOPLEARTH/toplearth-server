@@ -19,6 +19,9 @@ public enum ErrorCode {
     UNSUPPORTED_MEDIA_TYPE("40006", HttpStatus.BAD_REQUEST, "Unsupported Media Type."),
     INVALID_REQUEST_HEAD("40007", HttpStatus.BAD_REQUEST, "Invalid request head provided."),
     INVALID_OAUTH2_PROVIDER("40008", HttpStatus.BAD_REQUEST, "잘못된 OAuth2 제공자입니다."),
+    MISSING_REQUEST_IMAGES("40009", HttpStatus.BAD_REQUEST, "이미지를 찾을 수 없습니다."),
+    NOT_FOUND_REGION("40010", HttpStatus.BAD_REQUEST, "해당 지역이 존재하지 않습니다."),
+    NOT_FOUND_PLOGGING("40011", HttpStatus.BAD_REQUEST, "해당 플로깅이 존재하지 않습니다."),
 
     /**
      * 401** Unauthorized
