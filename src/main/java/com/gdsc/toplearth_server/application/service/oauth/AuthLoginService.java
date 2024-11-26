@@ -15,6 +15,7 @@ import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryIm
 import com.gdsc.toplearth_server.presentation.request.user.FcmTokenRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class AuthLoginService {
     private final OAuth2Util oAuth2Util;
     private final JwtUtil jwtUtil;
 
+    @Transactional
     public JwtDto kakaoLogin(String kakaoAccessToken, FcmTokenRequestDto fcmTokenRequestDto) {
         String fcmToken = fcmTokenRequestDto.fcmToken();
         OAuth2UserInfoResponseDto OAuth2UserInfo = getOAuth2UserInfo(
@@ -39,6 +41,7 @@ public class AuthLoginService {
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
 
+    @Transactional
     public JwtDto appleLogin(String appleIdToken, FcmTokenRequestDto fcmTokenRequestDto) {
         String fcmToken = fcmTokenRequestDto.fcmToken();
         OAuth2UserInfoResponseDto OAuth2UserInfo = getOAuth2UserInfo(
