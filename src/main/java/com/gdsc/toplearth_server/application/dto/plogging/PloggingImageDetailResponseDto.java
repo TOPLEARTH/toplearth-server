@@ -18,8 +18,8 @@ public record PloggingImageDetailResponseDto(
                 .ploggingImageId(ploggingImage.getId() == null ? null : ploggingImage.getId().toString())
                 .imageUrl(ploggingImage.getImage())
                 .createdAt(ploggingImage.getCreatedAt() == null ? null : ploggingImage.getCreatedAt().toString())
-                .latitude(ploggingImage.getLatitude().doubleValue())
-                .longitude(ploggingImage.getLongitude().doubleValue())
+                .latitude(ploggingImage.getLatitude())
+                .longitude(ploggingImage.getLongitude())
                 .label(ploggingImage.getELabel() == null ? null : ploggingImage.getELabel().toString())
                 .build();
     }

@@ -20,7 +20,7 @@ public record UserInfoResponseDto(
                 .socialId(user.getSocialId())
                 .nickname(user.getNickname())
                 .totalKilometers(user.getTotalDistance())
-                .targetKilometers(user.getGoalDistance().doubleValue())
+                .targetKilometers(user.getGoalDistance())
                 .creditInfo(user.getCredit())
                 .isJoinedTeam(user.checkJoinedTeam())
                 .build();

@@ -71,12 +71,15 @@ public class BootstrapService {
                         switch (mission.getMissionName()) {
                             case PICKUP ->
                                     QuestDetailResponseDto.fromMissionEntity(null, mission.getTarget(), null, null,
-                                            mission.getCurrent(), null, mission.getCreatedAt().toString());
+                                            mission.getCurrent(), null, mission.getCreatedAt().toString(),
+                                            mission.getCredit());
                             case FLOGGING -> QuestDetailResponseDto.fromMissionEntity(mission.getTarget(), null, null,
-                                    mission.getCurrent(), null, null, mission.getCreatedAt().toString());
+                                    mission.getCurrent(), null, null, mission.getCreatedAt().toString(),
+                                    mission.getCredit());
                             case LABELING ->
                                     QuestDetailResponseDto.fromMissionEntity(null, null, mission.getTarget(), null,
-                                            null, mission.getCurrent(), mission.getCreatedAt().toString());
+                                            null, mission.getCurrent(), mission.getCreatedAt().toString(),
+                                            mission.getCredit());
                         })
                 .collect(Collectors.groupingBy(quest -> {
                     LocalDateTime createdDate = LocalDateTime.parse(quest.createdAt());

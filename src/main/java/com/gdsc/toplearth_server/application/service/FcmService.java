@@ -31,6 +31,7 @@ public class FcmService {
         try {
             response = FirebaseMessaging.getInstance().sendAsync(message).get();
         } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
             throw new CustomException(ErrorCode.SERVER_ERROR);
         }
         System.out.println("message " + response);

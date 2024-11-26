@@ -8,7 +8,6 @@ public record QuestDetailResponseDto(
 //        Long questId, // 퀘스트 ID
 //        String title,   // 퀘스트 제목
 //        Integer target,    // 퀘스트 목표
-//        Integer questCredit, // 퀘스트 크레딧
 //        Integer currentProgress,  // 현재 진행 상황
 //        Boolean isCompleted,    // 퀘스트 완료 여부
 //        Integer progressRate, // 퀘스트 진행률
@@ -20,13 +19,15 @@ public record QuestDetailResponseDto(
         Integer myKmNumber,
         Integer myPickNumber,
         Integer myLabelNumber,
+        Integer questCredit, // 퀘스트 크레딧
         String createdAt
 ) {
     public static QuestDetailResponseDto fromMissionEntity(Integer targetKmName, Integer targetPickNumber,
                                                            Integer targetLabelNumber, Integer myKmNumber,
                                                            Integer myPickNumber, Integer myLabelNumber,
-                                                           String createdAt) {
+                                                           String createdAt, Integer questCredit) {
         return QuestDetailResponseDto.builder()
+                .questCredit(questCredit)
                 .targetKmName(targetKmName)
                 .targetPickNumber(targetPickNumber)
                 .targetLabelNumber(targetLabelNumber)
@@ -35,7 +36,5 @@ public record QuestDetailResponseDto(
                 .myLabelNumber(myLabelNumber)
                 .createdAt(createdAt)
                 .build();
-
-
     }
 }

@@ -25,7 +25,7 @@ public record PloggingDetailResponseDto(
     ) {
         return PloggingDetailResponseDto.builder()
                 .ploggingId(plogging.getId())
-                .distance(plogging.getDistance().doubleValue())
+                .distance(plogging.getDistance())
                 .duration(plogging.getDuration())
                 .trashCnt(plogging.getPickUpCnt())
                 .startedAt(plogging.getStartedAt() == null ? null : plogging.getStartedAt().toString())
