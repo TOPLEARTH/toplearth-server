@@ -127,4 +127,8 @@ public class User {
     public boolean checkJoinedTeam() {
         return this.member != null;
     }
+
+    public void updateFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }

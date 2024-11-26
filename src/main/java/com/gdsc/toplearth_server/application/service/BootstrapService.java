@@ -14,6 +14,7 @@ import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDt
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.TeamMemberResponseDto;
 import com.gdsc.toplearth_server.application.dto.user.UserInfoResponseDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
@@ -32,7 +33,9 @@ import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepo
 import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +57,7 @@ public class BootstrapService {
     private final MemberRepositoryImpl memberRepositoryImpl;
     private final RegionRepositoryImpl regionRepositoryImpl;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public BootstrapResponseDto bootstrap(UUID userId) {
         System.err.println(userId);
         User user = userRepositoryImpl.findById(userId)
@@ -63,17 +66,29 @@ public class BootstrapService {
 
         List<Mission> dailyQuestList = missionRepositoryImpl.findByUserAndMissionType(user, EMissionType.DAILY);
 
-        List<QuestDetailResponseDto> dailyQuestDtoList = dailyQuestList.stream()
-                .map(QuestDetailResponseDto::fromMissionEntity)
-                .toList();
+        Map<String, List<QuestDetailResponseDto>> groupedDailyQuests = dailyQuestList.stream()
+                .map(mission ->
+                        switch (mission.getMissionName()) {
+                            case PICKUP ->
+                                    QuestDetailResponseDto.fromMissionEntity(null, mission.getTarget(), null, null,
+                                            mission.getCurrent(), null, mission.getCreatedAt().toString());
+                            case FLOGGING -> QuestDetailResponseDto.fromMissionEntity(mission.getTarget(), null, null,
+                                    mission.getCurrent(), null, null, mission.getCreatedAt().toString());
+                            case LABELING ->
+                                    QuestDetailResponseDto.fromMissionEntity(null, null, mission.getTarget(), null,
+                                            null, mission.getCurrent(), mission.getCreatedAt().toString());
+                        })
+                .collect(Collectors.groupingBy(quest -> {
+                    LocalDateTime createdDate = LocalDateTime.parse(quest.createdAt());
+                    return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                }));
 
-        QuestInfoResponseDto questInfoResponseDto = QuestInfoResponseDto.fromEntityList(
-                dailyQuestDtoList
-        );
+        QuestInfoResponseDto questInfoResponseDto = QuestInfoResponseDto.fromEntityList(groupedDailyQuests);
 
         ReadTeamResponseDto readTeamResponseDto = getReadTeam(user);
 
-        List<PloggingDetailResponseDto> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user).stream()
+        Map<String, List<PloggingDetailResponseDto>> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user)
+                .stream()
                 .map(plogging -> {
                     List<PloggingImage> ploggingImageList = ploggingImagesRepositoryImpl.findByPlogging(plogging);
                     PloggingTeamInfoResponseDto ploggingTeamInfo = getPloggingMatchingTeamInfo(userId);
@@ -82,7 +97,11 @@ public class BootstrapService {
                             ploggingImageList,
                             ploggingTeamInfo
                     );
-                }).toList();
+                })
+                .collect(Collectors.groupingBy(ploggingDetailResponseDto -> {
+                    LocalDateTime createdDate = LocalDateTime.parse(ploggingDetailResponseDto.startedAt());
+                    return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                }));
 
         PloggingInfoResponseDto ploggingInfoResponseDto = PloggingInfoResponseDto.fromPloggingDetailResponseDtoList(
                 ploggingDetailDtoList);
@@ -149,6 +168,10 @@ public class BootstrapService {
 
         List<Member> members = memberRepositoryImpl.findByTeam(team); // 그 유저가 속한 팀의 모든 멤버들을 조회한다. //멤버 정보에 사용할 예정
 
+        List<TeamMemberResponseDto> memberResponseDtos = members.stream()
+                .map(TeamMemberResponseDto::of)
+                .toList();
+
         List<Plogging> ploggingList = ploggingRepositoryImpl.findByYearAndTeam(team.getCreatedAt().getYear(),
                 team); // 플로깅을 시작한 연도와 유저의 팀을 기준으로 플로깅 정보를 불러온다.
 
@@ -186,7 +209,7 @@ public class BootstrapService {
                         )
                 ));
 
-        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberMonthlyDataMap);
+        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberResponseDtos, memberMonthlyDataMap);
     }
 
     public List<RegionRankInfoResponseDto> getRegionRankInfo() {
@@ -203,4 +226,5 @@ public class BootstrapService {
                 )
                 .collect(Collectors.toList());
     }
+
 }

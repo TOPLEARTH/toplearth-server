@@ -7,6 +7,7 @@ import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamListInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamStatisticsResponseDto;
+import com.gdsc.toplearth_server.application.dto.team.TeamMemberResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamCodeResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.UpdateTeamNameResponseDto;
 import com.gdsc.toplearth_server.application.service.FcmService;
@@ -65,6 +66,10 @@ public class TeamService {
 
         List<Member> members = membersRepository.findByTeam(team); // 그 유저가 속한 팀의 모든 멤버들을 조회한다. //멤버 정보에 사용할 예정
 
+        List<TeamMemberResponseDto> memberResponseDtos = members.stream()
+                .map(TeamMemberResponseDto::of)
+                .toList();
+
         List<Plogging> ploggingList = ploggingRepository.findByYearAndTeam(team.getCreatedAt().getYear(),
                 team); // 플로깅을 시작한 연도와 유저의 팀을 기준으로 플로깅 정보를 불러온다.
 
@@ -102,7 +107,7 @@ public class TeamService {
                         )
                 ));
 
-        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberMonthlyDataMap);
+        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberResponseDtos, memberMonthlyDataMap);
     }
 
     //팀목록 검색

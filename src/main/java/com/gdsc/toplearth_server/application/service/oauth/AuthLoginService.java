@@ -35,6 +35,7 @@ public class AuthLoginService {
                         ELoginProvider.KAKAO,
                         fcmToken
                 ));
+        user.updateFcmToken(fcmToken);
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
 
@@ -50,6 +51,7 @@ public class AuthLoginService {
                         ELoginProvider.APPLE,
                         fcmToken
                 ));
+        user.updateFcmToken(fcmToken);
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
 
@@ -61,7 +63,6 @@ public class AuthLoginService {
                         EUserRole.USER,
                         provider,
                         fcmToken
-
                 )
         );
     }

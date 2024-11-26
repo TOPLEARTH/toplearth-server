@@ -1,6 +1,7 @@
 package com.gdsc.toplearth_server.presentation.controller;
 
 import com.gdsc.toplearth_server.application.service.TestService;
+import com.gdsc.toplearth_server.application.service.team.TeamService;
 import com.gdsc.toplearth_server.core.annotation.UserId;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class TestController {
     private final TestService testService;
+    private final TeamService teamService;
 
     @GetMapping("/hello")
     public CommonResponseDto<?> hello() {
@@ -47,5 +49,12 @@ public class TestController {
     ) {
         log.info("uuid : " + userId);
         return CommonResponseDto.ok(true);
+    }
+
+    @GetMapping("/quest")
+    public CommonResponseDto<?> quest(
+            @UserId UUID userId
+    ) {
+        return CommonResponseDto.ok(teamService.readTeam(userId));
     }
 }
