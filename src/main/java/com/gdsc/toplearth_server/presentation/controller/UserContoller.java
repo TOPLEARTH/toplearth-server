@@ -1,4 +1,4 @@
-package com.gdsc.toplearth_server.presentation.controller.user;
+package com.gdsc.toplearth_server.presentation.controller;
 
 import com.gdsc.toplearth_server.application.dto.user.UpdateGoalResponseDto;
 import com.gdsc.toplearth_server.application.service.user.UserService;

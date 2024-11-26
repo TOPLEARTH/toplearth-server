@@ -9,6 +9,8 @@ import com.gdsc.toplearth_server.application.dto.admin.ReadUserResponseDto;
 import com.gdsc.toplearth_server.core.common.PageInfoDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
+import com.gdsc.toplearth_server.core.security.JwtDto;
+import com.gdsc.toplearth_server.core.util.JwtUtil;
 import com.gdsc.toplearth_server.domain.entity.report.Report;
 import com.gdsc.toplearth_server.domain.entity.team.Member;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
@@ -19,6 +21,7 @@ import com.gdsc.toplearth_server.infrastructure.repository.report.ReportReposito
 import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
+import com.gdsc.toplearth_server.presentation.request.admin.AdminLoginRequestDto;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +45,15 @@ public class AdminService {
     private final TeamRepositoryImpl teamsRepository;
     private final MatchingRepositoryImpl matchingRepository;
     private final ReportRepositoryImpl reportsRepository;
+    private final JwtUtil jwtUtil;
+
+    public JwtDto login(AdminLoginRequestDto adminLoginRequestDto) {
+        User user = userRepository.findByNicknameAndSocialId(adminLoginRequestDto.loginId(),
+                        adminLoginRequestDto.password())
+                .orElseThrow(() -> new CustomException(ErrorCode.CONFLICT_ADMIN_ID));
+
+        return jwtUtil.generateTokens(user.getId(), EUserRole.ADMIN);
+    }
 
     public ReadUserDetailResponseDto getUser(UUID userId) {
         User user = userRepository.findById(userId)

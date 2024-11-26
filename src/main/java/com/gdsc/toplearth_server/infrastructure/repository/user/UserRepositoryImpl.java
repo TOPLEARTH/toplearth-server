@@ -19,4 +19,6 @@ public interface UserRepositoryImpl extends JpaRepository<User, UUID>, UserRepos
 
     @Query("SELECT u FROM User u WHERE u.socialId = :socialId")
     Optional<User> findBySocialId(String socialId);
+
+    Optional<User> findByNicknameAndSocialId(String nickname, String socialId);
 }

@@ -1,4 +1,4 @@
-package com.gdsc.toplearth_server.presentation.controller.team;
+package com.gdsc.toplearth_server.presentation.controller;
 
 import com.gdsc.toplearth_server.application.service.team.TeamService;
 import com.gdsc.toplearth_server.core.annotation.UserId;

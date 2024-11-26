@@ -1,12 +1,15 @@
-package com.gdsc.toplearth_server.presentation.controller.admin;
+package com.gdsc.toplearth_server.presentation.controller;
 
 import com.gdsc.toplearth_server.application.service.admin.AdminService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
+import com.gdsc.toplearth_server.presentation.request.admin.AdminLoginRequestDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+
+    @PostMapping("/login")
+    public CommonResponseDto<?> login(
+            @RequestBody AdminLoginRequestDto adminLoginRequestDto
+    ) {
+        return CommonResponseDto.ok(adminService.login(adminLoginRequestDto));
+    }
 
     //회원 상세조회 (피그마 완성하면 할 예정)
     @GetMapping("/users/{userId}")
