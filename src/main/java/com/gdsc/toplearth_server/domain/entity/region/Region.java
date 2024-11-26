@@ -33,4 +33,11 @@ public class Region {
 
     @OneToMany(mappedBy = "region", cascade = CascadeType.MERGE)
     private List<Plogging> ploggings;
+
+    //------------------------------------------------
+
+    public void updateTotalScore(Double distance) {
+        Double score = distance * 100;
+        this.totalScore += score.longValue();
+    }
 }

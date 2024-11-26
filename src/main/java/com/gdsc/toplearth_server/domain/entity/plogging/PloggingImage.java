@@ -18,10 +18,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Table(name = "plogging_image")
 public class PloggingImage {
     @Id
@@ -75,5 +77,9 @@ public class PloggingImage {
                 .latitude(latitude)
                 .longitude(longitude)
                 .build();
+    }
+
+    public void updateImageLabel(ELabel eLabel) {
+        this.eLabel = eLabel;
     }
 }

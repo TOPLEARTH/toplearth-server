@@ -22,6 +22,9 @@ public enum ErrorCode {
     MISSING_REQUEST_IMAGES("40009", HttpStatus.BAD_REQUEST, "이미지를 찾을 수 없습니다."),
     NOT_FOUND_REGION("40010", HttpStatus.BAD_REQUEST, "해당 지역이 존재하지 않습니다."),
     NOT_FOUND_PLOGGING("40011", HttpStatus.BAD_REQUEST, "해당 플로깅이 존재하지 않습니다."),
+    NOT_FOUND_PLOGGING_IMAGE("40012", HttpStatus.BAD_REQUEST, "해당 플로깅 이미지가 존재하지 않습니다."),
+    NOT_MATCH_PLOGGING_IMAGE_LABEL("40013", HttpStatus.BAD_REQUEST, "플로깅 이미지와 라벨의 개수가 일치하지 않습니다."),
+    INVALID_LABEL_TYPE("40014", HttpStatus.BAD_REQUEST, "잘못된 라벨 타입입니다."),
 
     /**
      * 401** Unauthorized

@@ -23,10 +23,12 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicUpdate
 @Table(name = "plogging")
 public class Plogging {
     @Id
@@ -116,13 +118,10 @@ public class Plogging {
     ) {
         this.distance = distance;
         this.pickUpCnt = pickUpCnt;
-        this.endedAt = LocalDateTime.now();
         this.duration = duration;
         this.image = ploggingInfoImage;
         this.burnedCalories = burnedCalories;
+        this.endedAt = LocalDateTime.now();
     }
 
-    public void addPloggingImage(PloggingImage ploggingImage) {
-        this.ploggingImages.add(ploggingImage);
-    }
 }
