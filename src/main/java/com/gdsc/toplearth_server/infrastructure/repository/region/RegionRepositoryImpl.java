@@ -1,6 +1,5 @@
 package com.gdsc.toplearth_server.infrastructure.repository.region;
 
-import com.gdsc.toplearth_server.application.dto.region.RegionRankProjection;
 import com.gdsc.toplearth_server.domain.entity.region.Region;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;

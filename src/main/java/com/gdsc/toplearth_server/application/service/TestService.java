@@ -1,29 +1,24 @@
 package com.gdsc.toplearth_server.application.service;
 
-import com.gdsc.toplearth_server.application.dto.plogging.PloggingDetailResponseDto;
-import com.gdsc.toplearth_server.application.dto.plogging.PloggingInfoResponseDto;
-import com.gdsc.toplearth_server.application.dto.plogging.PloggingTeamInfoResponseDto;
+import com.gdsc.toplearth_server.application.dto.bootstrap.HomeInfoResponseDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.core.security.JwtDto;
 import com.gdsc.toplearth_server.core.util.JwtUtil;
-import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
-import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.domain.entity.user.type.ELoginProvider;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import com.gdsc.toplearth_server.infrastructure.repository.mission.MissionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingProjection;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import jakarta.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,50 +54,64 @@ public class TestService {
         return jwtUtil.generateTokens(user.getId(), role);
     }
 
-    public PloggingInfoResponseDto getQuest(UUID userId) {
+
+    public HomeInfoResponseDto getHomeInfo(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-//        List<QuestDetailResponseDto> dailyQuestDtoList = dailyQuestList.stream()
-//                .map(QuestDetailResponseDto::fromMissionEntity)
-//                .toList();
+        Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(LocalDateTime.now(), user.getCreatedAt()));
 
-        Map<String, List<PloggingDetailResponseDto>> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user)
-                .stream()
-                .map(plogging -> {
-                    List<PloggingImage> ploggingImageList = ploggingImagesRepositoryImpl.findByPlogging(plogging);
-                    PloggingTeamInfoResponseDto ploggingTeamInfo = getPloggingMatchingTeamInfo(userId);
-                    return PloggingDetailResponseDto.fromPloggingEntity(
-                            plogging,
-                            ploggingImageList,
-                            ploggingTeamInfo
-                    );
-                })
-                .collect(Collectors.groupingBy(ploggingDetailResponseDto -> {
-                    LocalDateTime createdDate = LocalDateTime.parse(ploggingDetailResponseDto.startedAt());
-                    return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                }));
+        PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
-        return PloggingInfoResponseDto.fromPloggingDetailResponseDtoList(
-                ploggingDetailDtoList
-        );
+        return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
+                projection.getPloggingMonthlyDuration().intValue());
     }
 
-    private PloggingTeamInfoResponseDto getPloggingMatchingTeamInfo(UUID userId) {
-        Optional<Team> team = ploggingRepositoryImpl.findTeamByUserId(userId);
-        Optional<Team> opponentTeam = ploggingRepositoryImpl.findOpponentTeamByUserId(userId);
-
-        if (team.isEmpty() || opponentTeam.isEmpty()) {
-            return PloggingTeamInfoResponseDto.ofNull();
-        }
-
-        return PloggingTeamInfoResponseDto.fromPloggingTeamEntity(
-                team.get().getId(),
-                team.get().getName(),
-                opponentTeam.get().getId(),
-                opponentTeam.get().getName()
-        );
-    }
+//    public PloggingInfoResponseDto getQuest(UUID userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+//
+////        List<QuestDetailResponseDto> dailyQuestDtoList = dailyQuestList.stream()
+////                .map(QuestDetailResponseDto::fromMissionEntity)
+////                .toList();
+//
+//        Map<String, List<PloggingDetailResponseDto>> ploggingDetailDtoList = ploggingRepositoryImpl.findByUser(user)
+//                .stream()
+//                .map(plogging -> {
+//                    List<PloggingImage> ploggingImageList = ploggingImagesRepositoryImpl.findByPlogging(plogging);
+//                    PloggingTeamInfoResponseDto ploggingTeamInfo = getPloggingMatchingTeamInfo(userId);
+//                    return PloggingDetailResponseDto.fromPloggingEntity(
+//                            plogging,
+//                            ploggingImageList,
+//                            ploggingTeamInfo
+//                    );
+//                })
+//                .collect(Collectors.groupingBy(ploggingDetailResponseDto -> {
+//                    LocalDateTime createdDate = LocalDateTime.parse(ploggingDetailResponseDto.startedAt());
+//                    return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//                }));
+//
+//        return PloggingInfoResponseDto.fromPloggingDetailResponseDtoList(
+//                ploggingDetailDtoList
+//        );
+//    }
+//
+//    private PloggingTeamInfoResponseDto getPloggingMatchingTeamInfo(UUID userId) {
+//        Optional<Team> team = ploggingRepositoryImpl.findTeamByUserId(userId);
+//        Optional<Team> opponentTeam = ploggingRepositoryImpl.findOpponentTeamByUserId(userId);
+//
+//        if (team.isEmpty() || opponentTeam.isEmpty()) {
+//            return PloggingTeamInfoResponseDto.ofNull();
+//        }
+//
+//        return PloggingTeamInfoResponseDto.fromPloggingTeamEntity(
+//                team.get().getId(),
+//                team.get().getName(),
+//                opponentTeam.get().getId(),
+//                opponentTeam.get().getName()
+//        );
+//    }
 
 
 }

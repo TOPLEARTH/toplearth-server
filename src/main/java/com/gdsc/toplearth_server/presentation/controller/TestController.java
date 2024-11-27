@@ -1,10 +1,13 @@
 package com.gdsc.toplearth_server.presentation.controller;
 
+import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.application.service.TestService;
 import com.gdsc.toplearth_server.application.service.team.TeamService;
 import com.gdsc.toplearth_server.core.annotation.UserId;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
+import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     private final TestService testService;
     private final TeamService teamService;
+    private final FcmService fcmService;
+    private final UserRepositoryImpl userRepository;
 
     @GetMapping("/hello")
     public CommonResponseDto<?> hello() {
@@ -56,5 +61,23 @@ public class TestController {
             @UserId UUID userId
     ) {
         return CommonResponseDto.ok(teamService.readTeam(userId));
+    }
+
+    @GetMapping("/home")
+    public CommonResponseDto<?> home(
+            @UserId UUID userId
+    ) {
+        return CommonResponseDto.ok(testService.getHomeInfo(userId));
+    }
+
+    @PostMapping("/fcm")
+    public CommonResponseDto<?> fcm(
+            @UserId UUID userId
+    ) {
+        User user = userRepository.findById(userId).orElse(null);
+        System.err.println("asdfasd.  " + user.getFcmToken());
+        fcmService.sendMessage("이도형이ㅇㅇ형", "성공한건가요...? ",
+                "emHZ1inZGkELhzPqpZgtyR:APA91bFRL9-vqJkAK_vzwQ1m6ACrjyfrLFpGMXv_3Ct8RfF9j8H3REizQRVUBhtCj201rqkQmK9pHWMMyRryRaxB_OVeW9WLNcKXOsUhSA4E4Z0FxqKHoWo");
+        return CommonResponseDto.ok(true);
     }
 }

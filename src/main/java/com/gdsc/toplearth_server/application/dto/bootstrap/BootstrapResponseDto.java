@@ -12,6 +12,7 @@ import lombok.Builder;
 @Builder(access = AccessLevel.PRIVATE)
 public record BootstrapResponseDto(
         UserInfoResponseDto userInfo,
+        HomeInfoResponseDto homInfo,
         QuestInfoResponseDto questInfo,
         ReadTeamResponseDto teamInfo,
         PloggingInfoResponseDto ploggingInfo,

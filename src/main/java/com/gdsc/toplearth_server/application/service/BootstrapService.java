@@ -1,6 +1,7 @@
 package com.gdsc.toplearth_server.application.service;
 
 import com.gdsc.toplearth_server.application.dto.bootstrap.BootstrapResponseDto;
+import com.gdsc.toplearth_server.application.dto.bootstrap.HomeInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.bootstrap.LegacyInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.bootstrap.TrashInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.mission.QuestDetailResponseDto;
@@ -9,7 +10,6 @@ import com.gdsc.toplearth_server.application.dto.plogging.PloggingDetailResponse
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingTeamInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.region.RegionRankInfoResponseDto;
-import com.gdsc.toplearth_server.application.dto.region.RegionRankProjection;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamDistanceResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamLabelResponseDto;
 import com.gdsc.toplearth_server.application.dto.team.ReadTeamResponseDto;
@@ -29,13 +29,17 @@ import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.mission.MissionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingProjection;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRankProjection;
 import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +66,9 @@ public class BootstrapService {
         System.err.println(userId);
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        HomeInfoResponseDto homeInfoResponseDto = getHomeInfo(user);
+
         UserInfoResponseDto userInfoResponseDto = UserInfoResponseDto.fromUserEntity(user);
 
         List<Mission> dailyQuestList = missionRepositoryImpl.findByUserAndMissionType(user, EMissionType.DAILY);
@@ -135,6 +142,16 @@ public class BootstrapService {
         }
 
         return TrashInfoResponseDto.fromTrashCountMap(trashCountMap);
+    }
+
+    private HomeInfoResponseDto getHomeInfo(User user) {
+        Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(LocalDateTime.now(), user.getCreatedAt()));
+
+        PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+
+        return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
+                projection.getPloggingMonthlyDuration().intValue());
     }
 
     private LegacyInfoResponseDto getLegacyInfo() {

@@ -20,11 +20,11 @@ public class FcmService {
     public void sendMessage(String title, String body, String token) {
         //throws FirebaseMessagingException, ExecutionException, InterruptedException {
         Message message = Message.builder()
+                .setToken(token)
                 .setNotification(Notification.builder()
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .setToken(token)
                 .build();
 
         String response = null;

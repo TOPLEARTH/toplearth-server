@@ -22,4 +22,10 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
 
     @Query("SELECT p.matching.opponentTeam FROM Plogging p WHERE p.user.id = :userId")
     Optional<Team> findOpponentTeamByUserId(@Param("userId") UUID userId);
+
+    @Query("SELECT COUNT(*) ploggingMonthlyCount, COALESCE(SUM(p.duration), 0) ploggingMonthlyDuration "
+            + "FROM Plogging p "
+            + "WHERE p.user = :user "
+            + "AND DATE_FORMAT(p.startedAt, '%Y-%m') = :startedAt")
+    PloggingProjection findByUserAndCreatedAt(@Param("user") User user, @Param("startedAt") String startedAt);
 }

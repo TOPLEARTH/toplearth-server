@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -67,6 +68,9 @@ public class User {
     @Column(name = "credit")
     @ColumnDefault("0")
     private Integer credit;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     //-------------------------------------------------
 

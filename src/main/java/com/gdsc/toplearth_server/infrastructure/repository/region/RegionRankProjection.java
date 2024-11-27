@@ -1,4 +1,4 @@
-package com.gdsc.toplearth_server.application.dto.region;
+package com.gdsc.toplearth_server.infrastructure.repository.region;
 
 public interface RegionRankProjection {
     Long getId();
