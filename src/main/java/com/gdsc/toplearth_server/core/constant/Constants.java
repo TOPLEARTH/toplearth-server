@@ -25,7 +25,7 @@ public final class Constants {
             "/api/v1/auth/login/kakao",
             "/api/v1/auth/login/apple",
 
-            "/api/v1/admin/login",
+            "/api/v1/auth/admin/login",
 
             "/ws",
             "/ws-stomp",

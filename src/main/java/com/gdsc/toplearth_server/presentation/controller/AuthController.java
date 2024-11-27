@@ -1,8 +1,10 @@
 package com.gdsc.toplearth_server.presentation.controller;
 
+import com.gdsc.toplearth_server.application.service.admin.AdminService;
 import com.gdsc.toplearth_server.application.service.oauth.AuthLoginService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.core.constant.Constants;
+import com.gdsc.toplearth_server.presentation.request.admin.AdminLoginRequestDto;
 import com.gdsc.toplearth_server.presentation.request.user.FcmTokenRequestDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthController {
     private final AuthLoginService authLoginService;
+    private final AdminService adminService;
+
     /**
      * 카카오 로그인
      */
@@ -42,4 +46,12 @@ public class AuthController {
         log.info("Apple authToken : {}", appleIdToken);
         return CommonResponseDto.ok(authLoginService.appleLogin(appleIdToken, fcmTokenRequestDto));
     }
+
+    @PostMapping("/admin/login")
+    public CommonResponseDto<?> login(
+            @RequestBody AdminLoginRequestDto adminLoginRequestDto
+    ) {
+        return CommonResponseDto.ok(adminService.login(adminLoginRequestDto));
+    }
+
 }
