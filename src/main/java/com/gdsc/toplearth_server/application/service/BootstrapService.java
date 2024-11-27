@@ -132,12 +132,18 @@ public class BootstrapService {
 
     // 각각의 라벨링된 쓰레기 개수 조회
     public TrashInfoResponseDto getLabelCounts() {
+        // 네이티브 쿼리로 조회한 값은 String 타입
         List<Object[]> labelCounts = ploggingImagesRepositoryImpl.countByELabel();
         Map<ELabel, Long> trashCountMap = new HashMap<>();
 
         for (Object[] row : labelCounts) {
-            ELabel label = ELabel.valueOf((String) row[0]); // 네이티브 쿼리로 조회한 값은 String 타입
+            String labelString = (String) row[0];
             Long count = (Long) row[1];
+
+            if (labelString == null || labelString.isBlank()) {
+                labelString = String.valueOf(ELabel.UNKNOWN);
+            }
+            ELabel label = ELabel.valueOf(labelString.toUpperCase());
             trashCountMap.put(label, count);
         }
 

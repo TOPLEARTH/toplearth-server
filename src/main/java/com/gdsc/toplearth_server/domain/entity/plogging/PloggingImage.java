@@ -61,7 +61,7 @@ public class PloggingImage {
     ) {
         this.plogging = plogging;
         this.image = image;
-        this.eLabel = null;
+        this.eLabel = ELabel.UNKNOWN;
         this.latitude = latitude;
         this.longitude = longitude;
         this.createdAt = LocalDateTime.now();
