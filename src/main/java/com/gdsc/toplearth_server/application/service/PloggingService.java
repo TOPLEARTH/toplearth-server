@@ -62,10 +62,12 @@ public class PloggingService {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Plogging plogging = user.getPlogging().stream()
-                .filter(p -> p.getId().equals(ploggingId))
-                .findFirst()
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
+        // DB 레벨에서 조회, 성능 향상
+        Plogging plogging = ploggingRepositoryImpl.findByUserAndId(user, ploggingId);
+//        Plogging plogging = user.getPlogging().stream()
+//                .filter(p -> p.getId().equals(ploggingId))
+//                .findFirst()
+//                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
 
         String ploggingImageUrl = s3Service.uploadPloggingImage(ploggingImage, plogging.getId());
         PloggingImage ploggingImageEntity = PloggingImage.createPloggingImage(
@@ -84,10 +86,7 @@ public class PloggingService {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Plogging plogging = user.getPlogging().stream()
-                .filter(p -> p.getId().equals(ploggingId))
-                .findFirst()
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
+        Plogging plogging = ploggingRepositoryImpl.findByUserAndId(user, ploggingId);
 
         List<PloggingImageResponseDto> ploggingImageResponseDtoList =
                 ploggingImagesRepositoryImpl.findByPlogging(plogging).stream()
@@ -120,10 +119,7 @@ public class PloggingService {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Plogging plogging = user.getPlogging().stream()
-                .filter(p -> p.getId().equals(ploggingId))
-                .findFirst()
-                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
+        Plogging plogging = ploggingRepositoryImpl.findByUserAndId(user, ploggingId);
 
         List<Long> ploggingImageIds = updatePloggingImageLabelRequestDto.ploggingImageId();
         List<String> labels = updatePloggingImageLabelRequestDto.label();

@@ -12,7 +12,8 @@ public enum ELabel {
     GENERAL("일회용 용기"),
     CAN("캔"),
     PLASTIC_BAG("비닐봉지"),
-    OTHERS("기타");
+    OTHERS("기타"),
+    UNKNOWN("미분류");
 
     private final String label;
 }

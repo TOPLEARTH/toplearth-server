@@ -28,4 +28,6 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
             + "WHERE p.user = :user "
             + "AND DATE_FORMAT(p.startedAt, '%Y-%m') = :startedAt")
     PloggingProjection findByUserAndCreatedAt(@Param("user") User user, @Param("startedAt") String startedAt);
+
+    Plogging findByUserAndId(User user, Long ploggingId);
 }
