@@ -5,8 +5,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
-import com.gdsc.toplearth_server.core.util.ImageUtil;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -23,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class S3Service {
     private final AmazonS3Client amazonS3Client;
-    private final ImageUtil imageUtil;
 
     @Value("${cloud.aws.s3.plogging-poster}")
     private String bucketPloggingPoster;
@@ -34,23 +31,19 @@ public class S3Service {
         ObjectMetadata objectMetadata = new ObjectMetadata();
 
         try (InputStream originalInputStream = multipartFile.getInputStream()) {
-            // ImageUtil을 사용하여 이미지를 1:1 비율로 조정
-            InputStream processedInputStream = imageUtil.cropImageToSquare(originalInputStream);
 
-            // 조정된 이미지의 크기를 계산
-            byte[] imageBytes = processedInputStream.readAllBytes();
-            objectMetadata.setContentLength(imageBytes.length);
+            objectMetadata.setContentLength(multipartFile.getSize());
             objectMetadata.setContentType(multipartFile.getContentType());
 
-            // 조정된 이미지를 S3에 업로드
             amazonS3Client.putObject(
                     new PutObjectRequest(
                             bucketPloggingPoster,
                             fileName,
-                            new ByteArrayInputStream(imageBytes),
+                            originalInputStream,
                             objectMetadata
                     )
             );
+
             String imgUrl = amazonS3Client.getUrl(bucketPloggingPoster, fileName).toString();
             imageUrl = URLDecoder.decode(imgUrl, StandardCharsets.UTF_8);
             log.info(URLDecoder.decode(imgUrl, StandardCharsets.UTF_8));
