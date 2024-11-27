@@ -113,15 +113,16 @@ public class Plogging {
 
     public void updatePlogging(
             Double distance, Integer pickUpCnt,
-            Long duration, String ploggingInfoImage,
-            Integer burnedCalories
+            Long duration, Integer burnedCalories
     ) {
         this.distance = distance;
         this.pickUpCnt = pickUpCnt;
         this.duration = duration;
-        this.image = ploggingInfoImage;
         this.burnedCalories = burnedCalories;
         this.endedAt = LocalDateTime.now();
     }
 
+    public void updateImage(String image) {
+        this.image = image;
+    }
 }

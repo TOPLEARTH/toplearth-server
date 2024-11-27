@@ -60,11 +60,10 @@ public class PloggingController {
     public CommonResponseDto<?> updatePlogging(
             @UserId UUID userId,
             @PathVariable Long ploggingId,
-            @RequestPart(value = "ploggingData") UpdatePloggingRequestDto updatePloggingRequestDto,
-            @RequestPart(value = "ploggingImage") MultipartFile ploggingProfileImage
+            @RequestPart(value = "ploggingData") UpdatePloggingRequestDto updatePloggingRequestDto
     ) {
         return CommonResponseDto.ok(
-                ploggingService.updatePlogging(userId, ploggingId, ploggingProfileImage, updatePloggingRequestDto)
+                ploggingService.updatePlogging(userId, ploggingId, updatePloggingRequestDto)
         );
     }
 
@@ -73,9 +72,10 @@ public class PloggingController {
     public CommonResponseDto<?> updatePloggingImageLabel(
             @UserId UUID userId,
             @PathVariable Long ploggingId,
-            @RequestBody UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto
+            @RequestPart UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto,
+            @RequestPart(value = "ploggingImage") MultipartFile ploggingProfileImage
     ) {
-        ploggingService.updatePloggingImageLabel(userId, ploggingId, updatePloggingImageLabelRequestDto);
+        ploggingService.updatePloggingImageLabel(userId, ploggingId, updatePloggingImageLabelRequestDto, ploggingProfileImage);
         return CommonResponseDto.ok(null);
     }
 }

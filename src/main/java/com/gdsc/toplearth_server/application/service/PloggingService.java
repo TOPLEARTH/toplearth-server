@@ -77,7 +77,7 @@ public class PloggingService {
     // 플로깅 종료
     public UserPloggingFinishResponseDto updatePlogging(
             UUID userId, Long ploggingId,
-            MultipartFile ploggingProfileImage, UpdatePloggingRequestDto updatePloggingRequestDto
+            UpdatePloggingRequestDto updatePloggingRequestDto
     ) {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -90,15 +90,11 @@ public class PloggingService {
                         .map(PloggingImageResponseDto::fromPloggingImageEntity)
                         .collect(Collectors.toList());
 
-        // s3에 플로깅 프로필 이미지 업로드
-        String ploggingProfileImageUrl = s3Service.uploadPloggingImage(ploggingProfileImage, plogging.getId());
-
         // 플로깅 종료
         plogging.updatePlogging(
                 updatePloggingRequestDto.distance(),
                 updatePloggingRequestDto.pickUpCnt(),
                 updatePloggingRequestDto.duration(),
-                ploggingProfileImageUrl,
                 updatePloggingRequestDto.burnedCalories()
         );
 
@@ -111,13 +107,20 @@ public class PloggingService {
 
     // 플로깅 라벨링
     public void updatePloggingImageLabel(
-            UUID userId, Long ploggingId, UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto
+            UUID userId, Long ploggingId,
+            UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto, MultipartFile ploggingProfileImage
     ) {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
         Plogging plogging = ploggingRepositoryImpl.findByUserAndId(user, ploggingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
+
+        // s3에 플로깅 프로필 이미지 업로드
+        String ploggingProfileImageUrl = s3Service.uploadPloggingImage(ploggingProfileImage, plogging.getId());
+
+        // 플로깅 정보 이미지 업데이트
+        plogging.updateImage(ploggingProfileImageUrl);
 
         List<Long> ploggingImageIds = updatePloggingImageLabelRequestDto.ploggingImageIds();
         List<String> labels = updatePloggingImageLabelRequestDto.labels();
