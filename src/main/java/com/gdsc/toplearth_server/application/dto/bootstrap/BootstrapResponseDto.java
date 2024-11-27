@@ -12,7 +12,7 @@ import lombok.Builder;
 @Builder(access = AccessLevel.PRIVATE)
 public record BootstrapResponseDto(
         UserInfoResponseDto userInfo,
-        HomeInfoResponseDto homInfo,
+        HomeInfoResponseDto homeInfo,
         QuestInfoResponseDto questInfo,
         ReadTeamResponseDto teamInfo,
         PloggingInfoResponseDto ploggingInfo,
@@ -21,6 +21,7 @@ public record BootstrapResponseDto(
 ) {
     public static BootstrapResponseDto of(
             UserInfoResponseDto userInfo,
+            HomeInfoResponseDto homInfo,
             QuestInfoResponseDto questInfo,
             ReadTeamResponseDto teamInfo,
             PloggingInfoResponseDto ploggingInfo,
@@ -29,6 +30,7 @@ public record BootstrapResponseDto(
     ) {
         return BootstrapResponseDto.builder()
                 .userInfo(userInfo)
+                .homeInfo(homInfo)
                 .questInfo(questInfo)
                 .teamInfo(teamInfo)
                 .ploggingInfo(ploggingInfo)

@@ -122,6 +122,7 @@ public class BootstrapService {
 
         return BootstrapResponseDto.of(
                 userInfoResponseDto,
+                homeInfoResponseDto,
                 questInfoResponseDto,
                 readTeamResponseDto,
                 ploggingInfoResponseDto,
