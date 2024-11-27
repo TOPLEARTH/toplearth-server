@@ -105,6 +105,7 @@ public class User {
         this.profileImageUrl = null;
         this.refreshToken = null;
         this.credit = 0;
+        this.createdAt = LocalDateTime.now();
     }
 
     public static User toUserEntity(String socialId, String nickname, EUserRole userRole, ELoginProvider provider,
