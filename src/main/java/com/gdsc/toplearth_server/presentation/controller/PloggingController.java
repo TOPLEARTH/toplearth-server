@@ -4,8 +4,8 @@ import com.gdsc.toplearth_server.application.service.PloggingService;
 import com.gdsc.toplearth_server.core.annotation.UserId;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.presentation.request.plogging.CreatePloggingRequestDto;
-import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingImageLabelRequestDto;
 import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingRequestDto;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class PloggingController {
     public CommonResponseDto<?> updatePlogging(
             @UserId UUID userId,
             @PathVariable Long ploggingId,
-            @RequestPart(value = "ploggingData") UpdatePloggingRequestDto updatePloggingRequestDto
+            @RequestBody UpdatePloggingRequestDto updatePloggingRequestDto
     ) {
         return CommonResponseDto.ok(
                 ploggingService.updatePlogging(userId, ploggingId, updatePloggingRequestDto)
@@ -72,10 +72,11 @@ public class PloggingController {
     public CommonResponseDto<?> updatePloggingImageLabel(
             @UserId UUID userId,
             @PathVariable Long ploggingId,
-            @RequestPart UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto,
-            @RequestPart(value = "ploggingImage") MultipartFile ploggingProfileImage
+            @RequestPart(value = "ploggingImage") MultipartFile ploggingProfileImage,
+            @RequestParam(value = "ploggingImageIds") List<Long> ploggingImageIds,
+            @RequestParam(value = "labels") List<String> labels
     ) {
-        ploggingService.updatePloggingImageLabel(userId, ploggingId, updatePloggingImageLabelRequestDto, ploggingProfileImage);
+        ploggingService.updatePloggingImageLabel(userId, ploggingId, ploggingImageIds, labels, ploggingProfileImage);
         return CommonResponseDto.ok(null);
     }
 }

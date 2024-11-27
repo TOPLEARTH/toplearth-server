@@ -16,7 +16,6 @@ import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepo
 import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.plogging.CreatePloggingRequestDto;
-import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingImageLabelRequestDto;
 import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingRequestDto;
 import java.util.List;
 import java.util.UUID;
@@ -108,7 +107,8 @@ public class PloggingService {
     // 플로깅 라벨링
     public void updatePloggingImageLabel(
             UUID userId, Long ploggingId,
-            UpdatePloggingImageLabelRequestDto updatePloggingImageLabelRequestDto, MultipartFile ploggingProfileImage
+            List<Long> ploggingImageIds, List<String> labels,
+            MultipartFile ploggingProfileImage
     ) {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -121,9 +121,6 @@ public class PloggingService {
 
         // 플로깅 정보 이미지 업데이트
         plogging.updateImage(ploggingProfileImageUrl);
-
-        List<Long> ploggingImageIds = updatePloggingImageLabelRequestDto.ploggingImageIds();
-        List<String> labels = updatePloggingImageLabelRequestDto.labels();
 
         if (ploggingImageIds.size() != labels.size()) {
             throw new CustomException(ErrorCode.NOT_MATCH_PLOGGING_IMAGE_LABEL);
