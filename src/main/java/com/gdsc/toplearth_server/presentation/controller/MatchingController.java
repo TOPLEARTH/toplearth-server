@@ -4,6 +4,7 @@ import com.gdsc.toplearth_server.application.dto.matching.MatchingStatusResponse
 import com.gdsc.toplearth_server.application.service.matching.MatchingService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
+import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.presentation.request.matching.MatchingRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +21,8 @@ public class MatchingController {
 
     // 랜덤 매칭 요청
     @PostMapping("/random")
-    public CommonResponseDto<?> randomMatching(@RequestBody MatchingRequestDto matchingRequestDto) {
-        matchingService.addRandomMatchingRequest(matchingRequestDto);
+    public CommonResponseDto<?> randomMatching(@RequestBody TeamInfoMessage teamInfoMessage) {
+        matchingService.addRandomMatchingRequest(teamInfoMessage);
         return CommonResponseDto.ok(MatchingStatusResponseDto.of(EMatchingStatus.WAITING));
     }
 

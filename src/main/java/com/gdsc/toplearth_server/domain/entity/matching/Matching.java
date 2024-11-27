@@ -65,7 +65,7 @@ public class Matching {
     @OneToMany(mappedBy = "matching", cascade = CascadeType.MERGE)
     private List<Plogging> ploggings;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     public Matching(Team team, Team opponentTeam) {
         this.competitionScore = 0L;
         this.totalPickUpCnt = 0;
@@ -73,5 +73,14 @@ public class Matching {
         this.endedAt = null;
         this.winFlag = null;
         this.competitionStatus = true;
+        this.team = team;
+        this.opponentTeam = opponentTeam;
+    }
+
+    public static Matching fromTeamEntities(Team team, Team opponentTeam) {
+        return Matching.builder()
+                .team(team)
+                .opponentTeam(opponentTeam)
+                .build();
     }
 }
