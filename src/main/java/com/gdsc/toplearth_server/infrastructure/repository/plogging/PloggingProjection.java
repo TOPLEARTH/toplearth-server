@@ -5,4 +5,6 @@ public interface PloggingProjection {
 
     Long getPloggingMonthlyDuration();
 
+    Long getBurnedCalories();
+
 }

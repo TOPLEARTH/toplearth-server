@@ -65,7 +65,8 @@ public class TestService {
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
         return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
-                projection.getPloggingMonthlyDuration().intValue());
+                projection.getPloggingMonthlyDuration().intValue(),
+                projection.getBurnedCalories().intValue());
     }
 
 //    public PloggingInfoResponseDto getQuest(UUID userId) {

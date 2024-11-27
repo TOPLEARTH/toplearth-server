@@ -152,13 +152,14 @@ public class BootstrapService {
     }
 
     private HomeInfoResponseDto getHomeInfo(User user) {
-        Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(LocalDateTime.now(), user.getCreatedAt()));
+        Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(user.getCreatedAt(), LocalDateTime.now()));
 
         PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
         return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
-                projection.getPloggingMonthlyDuration().intValue());
+                projection.getPloggingMonthlyDuration().intValue(),
+                projection.getBurnedCalories().intValue());
     }
 
     private LegacyInfoResponseDto getLegacyInfo() {
