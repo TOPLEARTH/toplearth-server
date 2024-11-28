@@ -1,5 +1,6 @@
 package com.gdsc.toplearth_server.application.service.matching;
 
+import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
@@ -8,7 +9,6 @@ import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
-import com.gdsc.toplearth_server.presentation.request.matching.MatchingRequestDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,25 +23,36 @@ public class MatchingService {
     private final RabbitTemplate rabbitTemplate;
     private final MatchingRepositoryImpl matchingRepositoryImpl;
     private final TeamRepositoryImpl teamRepositoryImpl;
+    private final FcmService fcmService;
 
     // 랜덤 매칭 요청을 큐에 추가, Producer 역할
     public void addRandomMatchingRequest(TeamInfoMessage teamInfoMessage) {
         log.info("Adding random matching request for teamId: {}", teamInfoMessage.teamId());
-        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY, teamInfoMessage);
+        // Queue 추가
+        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
+                teamInfoMessage);
+        // 매칭 시작 알람 전송
+        fcmService.randomMatchingStart(teamInfoMessage.teamId());
     }
 
-    // 팀 지정 매칭 요청을 큐에 추가, Producer 역할
-    public void addTeamMatchingRequest(Long teamId, MatchingRequestDto matchingRequestDto) {
-        log.info("Adding team matching request for teamId: {}", matchingRequestDto.teamId());
-        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY, matchingRequestDto);
+    // 지정 매칭 요청
+    public void requestTeamMatching(Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+        fcmService.selectedMatching(teamInfoMessage.teamId(), opponentTeamId);
+    }
 
-        // TODO: 매칭 완료 알람 보내기
+    // 수락 시 매칭 요청을 큐에 추가, Producer 역할
+    public void addTeamMatchingRequest(Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+        log.info("Adding team matching request for teamId: {}", teamInfoMessage.teamId());
+        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
+                teamInfoMessage);
+        // TODO: 매칭 요청 알람 보내기
+
     }
 
     /**
-     * RabbitMQ에서 매칭 요청 처리
+     * RabbitMQ에서 랜덤 매칭 요청 처리
      */
-    public void processMatchingRequests(List<TeamInfoMessage> requests) {
+    public void processRandomMatchingRequests(List<TeamInfoMessage> requests) {
         log.info("Processing matching requests...");
 
         if (requests.size() < 2) {
@@ -72,7 +83,14 @@ public class MatchingService {
             log.info("{} matchings saved successfully.", matchedPairs.size());
         }
 
-        // TODO: 매칭 완료 알람 보내기
+        // 매칭 완료 알람 전송
+        matchedPairs
+                .forEach(matching -> {
+                    Team team = matching.getTeam();
+                    Team opponentTeam = matching.getOpponentTeam();
+                    fcmService.matchingFinish(team.getId(), opponentTeam.getId());
+                    fcmService.matchingFinish(opponentTeam.getId(), team.getId());
+                });
     }
 
     /**

@@ -5,7 +5,6 @@ import com.gdsc.toplearth_server.application.service.matching.MatchingService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
-import com.gdsc.toplearth_server.presentation.request.matching.MatchingRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,9 @@ public class MatchingController {
 
     // 랜덤 매칭 요청
     @PostMapping("/random")
-    public CommonResponseDto<?> randomMatching(@RequestBody TeamInfoMessage teamInfoMessage) {
+    public CommonResponseDto<?> randomMatching(
+            @RequestBody TeamInfoMessage teamInfoMessage
+    ) {
         matchingService.addRandomMatchingRequest(teamInfoMessage);
         return CommonResponseDto.ok(MatchingStatusResponseDto.of(EMatchingStatus.WAITING));
     }
@@ -30,9 +31,15 @@ public class MatchingController {
     @PostMapping("/{opponentTeamId}")
     public CommonResponseDto<?> matchingByTeam(
             @PathVariable Long opponentTeamId,
-            @RequestBody MatchingRequestDto matchingRequestDto
+            @RequestBody TeamInfoMessage teamInfoMessage
     ) {
-        matchingService.addTeamMatchingRequest(opponentTeamId, matchingRequestDto);
+        matchingService.requestTeamMatching(opponentTeamId, teamInfoMessage);
         return CommonResponseDto.ok(MatchingStatusResponseDto.of(EMatchingStatus.WAITING));
     }
+
+    // 지정 매칭 수락
+    // @PostMapping("/accept")
+
+    // 지정 매칭 거절
+
 }

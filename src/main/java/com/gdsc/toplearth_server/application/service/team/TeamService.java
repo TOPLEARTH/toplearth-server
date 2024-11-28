@@ -236,7 +236,7 @@ public class TeamService {
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MEMBER));
         String token = leadMember.getUser().getFcmToken();
 
-        fcmService.sendMessage("가입 신청 문의", String.format("%s님이 가입신청을하였습니다.", user.getNickname()), token);
+        fcmService.sendMessage("가입 신청 문의", String.format("%s님이 가입 신청을 하였습니다.", user.getNickname()), token);
 
         Member member = Member.toMemberEntity(ETeamRole.MEMBER, user, team);
         membersRepository.save(member);

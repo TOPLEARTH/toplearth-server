@@ -46,7 +46,7 @@ public class MatchingScheduler {    // 정각마다 매칭 진행
             // 매칭 요청이 있을 경우 처리
             if (!requests.isEmpty()) {
                 log.info("Fetched {} matching requests from RabbitMQ.", requests.size());
-                matchingService.processMatchingRequests(requests); // 매칭 처리
+                matchingService.processRandomMatchingRequests(requests); // 매칭 처리
                 log.info("Processed {} matching requests successfully.", requests.size());
             } else {
                 log.info("No matching requests found in RabbitMQ.");

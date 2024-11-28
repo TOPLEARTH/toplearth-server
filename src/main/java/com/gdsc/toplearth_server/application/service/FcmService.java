@@ -68,21 +68,19 @@ public class FcmService {
 
         ourMembers.forEach(ourMember -> sendMessage(
                 "지정 매칭 요청!!",
-                String.format("%s님에 의해서 %s에게 지정매칭을 요청했습니다.", leader.getUser().getMember(), opponentTeam.getName()),
+                String.format("%s님에 의해서 %s팀에게 지정매칭을 요청했습니다.", leader.getUser().getMember(), opponentTeam.getName()),
                 ourMember.getUser().getFcmToken()
         ));
 
         opponentMembers.forEach(opponentMember -> sendMessage(
                 "지정 매칭 요청!!",
-                String.format("%s팀에게 의해서 매칭 요청이 왔습니다.", team.getName()),
+                String.format("%s팀에게 매칭 요청이 왔습니다.", team.getName()),
                 opponentMember.getUser().getFcmToken()
         ));
 
     }
 
-
-    private void sendMessage(String title, String body, String token) {
-        //throws FirebaseMessagingException, ExecutionException, InterruptedException {
+    public void sendMessage(String title, String body, String token) {
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(Notification.builder()
