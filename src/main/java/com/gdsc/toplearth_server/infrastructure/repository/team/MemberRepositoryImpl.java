@@ -21,5 +21,7 @@ public interface MemberRepositoryImpl extends JpaRepository<Member, Long> {
 
     List<Member> findByTeam(Team team);
 
+    List<Member> findByTeamAndTeamRole(Team team, ETeamRole role);
+
     Optional<Member> findByTeamRoleAndTeam(ETeamRole eTeamRole, Team team);
 }
