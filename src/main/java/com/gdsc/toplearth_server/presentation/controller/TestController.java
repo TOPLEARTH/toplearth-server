@@ -77,7 +77,7 @@ public class TestController {
         User user = userRepository.findById(userId).orElse(null);
         System.err.println("asdfasd.  " + user.getFcmToken());
         fcmService.sendMessage("이도형이ㅇㅇ형", "성공한건가요...? ",
-                "emHZ1inZGkELhzPqpZgtyR:APA91bFRL9-vqJkAK_vzwQ1m6ACrjyfrLFpGMXv_3Ct8RfF9j8H3REizQRVUBhtCj201rqkQmK9pHWMMyRryRaxB_OVeW9WLNcKXOsUhSA4E4Z0FxqKHoWo");
+                "dSWMoXSQ3Uk_mrPH-Eq0ig:APA91bFKAO8sFVD4SglFk5NcpDwTswCy10F8EUkwydUS1yLyvmF8ri5W94DbTOHEIKTSPj0ZD1FT74eDb0038cM4xNCUV2TRXJNgHecQOo5JhNbgoYqZl58");
         return CommonResponseDto.ok(true);
     }
 }
