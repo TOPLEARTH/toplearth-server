@@ -12,4 +12,8 @@ public interface PloggingImagesRepositoryImpl extends JpaRepository<PloggingImag
     // 네이티브 쿼리로 성능 최적화
     @Query(value = "SELECT e_label, COUNT(*) FROM plogging_image GROUP BY e_label", nativeQuery = true)
     List<Object[]> countByELabel();
+
+    @Query(value = "SELECT e_label label, COUNT(*) labelCount FROM plogging_image GROUP BY e_label", nativeQuery = true)
+    List<LabelProjection> countByELabelCount();
+
 }

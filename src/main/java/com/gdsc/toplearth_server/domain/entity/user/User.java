@@ -72,6 +72,10 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "reports_cnt")
+    @ColumnDefault("0")
+    private Integer reportsCnt;
+
     //-------------------------------------------------
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.MERGE)

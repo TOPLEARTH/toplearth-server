@@ -30,4 +30,11 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
     PloggingProjection findByUserAndCreatedAt(@Param("user") User user, @Param("startedAt") String startedAt);
 
     Optional<Plogging> findByUserAndId(User user, Long ploggingId);
+
+    @Query("SELECT COALESCE(SUM(p.duration), 0) duration, COALESCE(SUM(p.pickUpCnt), 0) trashCnt, FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m-01') startedAt "
+            +
+            "FROM Plogging p " +
+            "GROUP BY FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m') " +
+            "ORDER BY p.startedAt")
+    List<AdminPloggingProjection> ploggingMonthly();
 }

@@ -46,12 +46,27 @@ public class AdminController {
         return CommonResponseDto.ok(adminService.getReports(page, size, sort));
     }
 
+    //신고 상세조회
+    @GetMapping("/reports/{reportId}")
+    public CommonResponseDto<?> getReportDetail(
+            @PathVariable Long reportId
+    ) {
+        return CommonResponseDto.ok(adminService.getReportDetail(reportId));
+    }
+
     //신고 처리
     @PatchMapping("/reports/{reportId}")
     public CommonResponseDto<?> updateReport(
             @PathVariable Long reportId
     ) {
         return CommonResponseDto.ok(adminService.updateReport(reportId));
+    }
+
+    @GetMapping("/labels")
+    public CommonResponseDto<?> getLabel(
+
+    ) {
+        return CommonResponseDto.ok(adminService.getLabel());
     }
 
     //팀 조회

@@ -1,22 +1,30 @@
 package com.gdsc.toplearth_server.application.service.admin;
 
+import com.gdsc.toplearth_server.application.dto.admin.AdminInfo;
 import com.gdsc.toplearth_server.application.dto.admin.ReadAdminTeamDetailResponseDto;
 import com.gdsc.toplearth_server.application.dto.admin.ReadAdminTeamResponseDto;
+import com.gdsc.toplearth_server.application.dto.admin.ReadLabelResponseDto;
+import com.gdsc.toplearth_server.application.dto.admin.ReadReportDetailResponseDto;
 import com.gdsc.toplearth_server.application.dto.admin.ReadReportResponseDto;
 import com.gdsc.toplearth_server.application.dto.admin.ReadTeamMemberResponseDto;
 import com.gdsc.toplearth_server.application.dto.admin.ReadUserDetailResponseDto;
 import com.gdsc.toplearth_server.application.dto.admin.ReadUserResponseDto;
+import com.gdsc.toplearth_server.application.dto.bootstrap.TrashInfoResponseDto;
+import com.gdsc.toplearth_server.application.dto.plogging.PloggingImageDetailResponseDto;
 import com.gdsc.toplearth_server.core.common.PageInfoDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.core.security.JwtDto;
 import com.gdsc.toplearth_server.core.util.JwtUtil;
+import com.gdsc.toplearth_server.domain.entity.plogging.type.ELabel;
 import com.gdsc.toplearth_server.domain.entity.report.Report;
 import com.gdsc.toplearth_server.domain.entity.team.Member;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.report.ReportRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.MemberRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
@@ -45,6 +53,8 @@ public class AdminService {
     private final TeamRepositoryImpl teamsRepository;
     private final MatchingRepositoryImpl matchingRepository;
     private final ReportRepositoryImpl reportsRepository;
+    private final PloggingRepositoryImpl ploggingRepository;
+    private final PloggingImagesRepositoryImpl ploggingImagesRepository;
     private final JwtUtil jwtUtil;
 
     public JwtDto login(AdminLoginRequestDto adminLoginRequestDto) {
@@ -96,12 +106,46 @@ public class AdminService {
         return result;
     }
 
+    public ReadReportDetailResponseDto getReportDetail(Long reportId) {
+        Report report = reportsRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
+
+        List<PloggingImageDetailResponseDto> responseDtos = report.getPlogging().getPloggingImages().stream()
+                .map(PloggingImageDetailResponseDto::fromPloggingImageEntity)
+                .toList();
+
+        return ReadReportDetailResponseDto.of(report, responseDtos);
+    }
+
     public Boolean updateReport(Long reportId) {
         Report report = reportsRepository.findById(reportId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
         report.updateExecute();
 
         return true;
+    }
+
+    public ReadLabelResponseDto getLabel() {
+        List<Object[]> labelCounts = ploggingImagesRepository.countByELabel();
+        Map<ELabel, Long> trashCountMap = new HashMap<>();
+
+        for (Object[] row : labelCounts) {
+            String labelString = (String) row[0];
+            Long count = (Long) row[1];
+
+            if (labelString == null || labelString.isBlank()) {
+                labelString = String.valueOf(ELabel.UNKNOWN);
+            }
+            ELabel label = ELabel.valueOf(labelString.toUpperCase());
+            trashCountMap.put(label, count);
+        }
+
+        List<AdminInfo> adminInfos = ploggingRepository.ploggingMonthly().stream()
+                .map(adminPloggingProjection -> AdminInfo.of(adminPloggingProjection.getTrashCount(),
+                        adminPloggingProjection.getDuration())
+                ).toList();
+
+        return ReadLabelResponseDto.of(adminInfos, TrashInfoResponseDto.fromTrashCountMap(trashCountMap));
     }
 
     public Map<String, Object> getTeams(int page, int size, String sort, String text) {
