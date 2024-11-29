@@ -4,6 +4,7 @@ import com.gdsc.toplearth_server.application.service.admin.AdminService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,6 +61,13 @@ public class AdminController {
             @PathVariable Long reportId
     ) {
         return CommonResponseDto.ok(adminService.updateReport(reportId));
+    }
+
+    @DeleteMapping("/reports/{reportId}")
+    public CommonResponseDto<?> deleteReport(
+            @PathVariable Long reportId
+    ) {
+        return CommonResponseDto.ok(adminService.deleteReport(reportId));
     }
 
     @GetMapping("/labels")

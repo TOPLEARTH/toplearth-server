@@ -1,5 +1,6 @@
 package com.gdsc.toplearth_server.infrastructure.repository.plogging;
 
+import com.gdsc.toplearth_server.domain.entity.matching.Matching;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
@@ -37,4 +38,14 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
             "GROUP BY FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m') " +
             "ORDER BY p.startedAt")
     List<AdminPloggingProjection> ploggingMonthly();
+
+
+    @Query("SELECT p "
+            + "FROM Plogging p "
+            + "WHERE p.matching = :ourTeamMatching OR p.matching = :opponentTeam "
+            + "ORDER BY p.startedAt DESC")
+    List<Plogging> findByOurTeamMatchingWithMatching(
+            @Param("ourTeamMatching") Matching ourTeamMatching,
+            @Param("opponentTeam") Matching opponentTeamMatching
+    );
 }

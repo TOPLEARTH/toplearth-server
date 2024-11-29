@@ -125,6 +125,14 @@ public class AdminService {
         return true;
     }
 
+    public Boolean deleteReport(Long reportId) {
+        Report report = reportsRepository.findById(reportId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
+        reportsRepository.delete(report);
+
+        return true;
+    }
+
     public ReadLabelResponseDto getLabel() {
         List<Object[]> labelCounts = ploggingImagesRepository.countByELabel();
         Map<ELabel, Long> trashCountMap = new HashMap<>();

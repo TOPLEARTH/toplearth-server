@@ -2,11 +2,14 @@ package com.gdsc.toplearth_server.presentation.controller;
 
 import com.gdsc.toplearth_server.application.dto.matching.MatchingStatusResponseDto;
 import com.gdsc.toplearth_server.application.service.matching.MatchingService;
+import com.gdsc.toplearth_server.core.annotation.UserId;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.presentation.request.matching.VSFinishRequestDto;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +45,6 @@ public class MatchingController {
     // 지정 매칭 수락
     // @PostMapping("/{teamId}/accept")
 
-
     // 지정 매칭 거절
     // @PostMapping("/{teamId}/reject")
 
@@ -55,4 +57,13 @@ public class MatchingController {
         matchingService.finishVS(matchingId, vsFinishRequestDto);
         return CommonResponseDto.ok(null);
     }
+
+    //내팀 상대팀 최근 플로깅 조회
+    @GetMapping("/plogging")
+    public CommonResponseDto<?> pLogging(
+            @UserId UUID userId
+    ) {
+        return CommonResponseDto.ok(matchingService.recentPlogging(userId));
+    }
+
 }

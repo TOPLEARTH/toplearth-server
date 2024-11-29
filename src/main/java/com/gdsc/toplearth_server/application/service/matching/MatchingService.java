@@ -1,17 +1,23 @@
 package com.gdsc.toplearth_server.application.service.matching;
 
+import com.gdsc.toplearth_server.application.dto.plogging.MatchingRecentPloggingResponseDto;
 import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.matching.Matching;
+import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
+import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.matching.VSFinishRequestDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -26,6 +32,8 @@ public class MatchingService {
     private final MatchingRepositoryImpl matchingRepositoryImpl;
     private final TeamRepositoryImpl teamRepositoryImpl;
     private final FcmService fcmService;
+    private final UserRepositoryImpl userRepositoryImpl;
+    private final PloggingRepositoryImpl ploggingRepositoryImpl;
 
     // 랜덤 매칭 요청을 큐에 추가, Producer 역할
     public void addRandomMatchingRequest(TeamInfoMessage teamInfoMessage) {
@@ -126,4 +134,26 @@ public class MatchingService {
         log.info("Matching ID: {} has been finished.", matching.getId());
     }
 
+    @Transactional(readOnly = true)
+    public List<MatchingRecentPloggingResponseDto> recentPlogging(UUID userId) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        Team ourTeam = user.getMember().getTeam();
+
+        Matching ourTeamMatching = matchingRepositoryImpl.findFirstByTeamOrderByStartedAtDesc(ourTeam)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MATCH));
+
+        Matching opponentTeamMatching = matchingRepositoryImpl.findFirstByTeamOrderByStartedAtDesc(
+                        ourTeamMatching.getOpponentTeam(), ourTeam)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MATCH));
+
+        List<Plogging> ploggings = ploggingRepositoryImpl.findByOurTeamMatchingWithMatching(ourTeamMatching,
+                opponentTeamMatching);
+
+        return ploggings.stream()
+                .map(plogging -> MatchingRecentPloggingResponseDto.fromPloggingEntity(plogging,
+                        plogging.getPloggingImages()))
+                .toList();
+    }
 }
