@@ -79,4 +79,13 @@ public class PloggingController {
         ploggingService.updatePloggingImageLabel(userId, ploggingId, ploggingImageIds, labels, ploggingProfileImage);
         return CommonResponseDto.ok(null);
     }
+
+    @PostMapping("/{ploggingId}/reports")
+    public CommonResponseDto<?> createPloggingReport(
+            @UserId UUID userId,
+            @PathVariable(name = "ploggingId") Long ploggingId
+    ) {
+        ploggingService.createPloogingReport(userId, ploggingId);
+        return CommonResponseDto.ok(null);
+    }
 }

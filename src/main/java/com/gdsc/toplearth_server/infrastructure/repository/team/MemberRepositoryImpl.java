@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface MemberRepositoryImpl extends JpaRepository<Member, Long> {
     Optional<Member> findByIdAndTeam(Long memberId, Team team);
@@ -24,4 +25,9 @@ public interface MemberRepositoryImpl extends JpaRepository<Member, Long> {
     List<Member> findByTeamAndTeamRole(Team team, ETeamRole role);
 
     Optional<Member> findByTeamRoleAndTeam(ETeamRole eTeamRole, Team team);
+
+    @Query("SELECT m "
+            + "FROM Member m "
+            + "WHERE m.team = :ourTeam OR m.team = :opponentTeam")
+    List<Member> findByTeam(@Param("ourTeam") Team ourTeam, @Param("opponentTeam") Team opponentTeam);
 }

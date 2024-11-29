@@ -107,6 +107,41 @@ public class FcmService {
 
     }
 
+
+    //teamId는 수락을 해준팀 opponentId는 맨처음 지정 요청을 보낸팀
+    public void acceptMatching(Long teamId, Long opponentId) {
+        Team ourTeam = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+        Team opponentTeam = teamRepository.findById(opponentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+
+        List<Member> members = memberRepository.findByTeam(ourTeam, opponentTeam);
+
+        members.forEach(ourMember -> sendMessage(
+                "지정 매칭 완료!!",
+                String.format("%s팀에서 매칭을 수락하여 지정매칭 되었습니다. 정각에 대결이 시작됩니다.", ourTeam.getName()),
+                ourMember.getUser().getFcmToken()
+        ));
+
+    }
+
+    //teamId는 수락을 해준팀 opponentId는 맨처음 지정 요청을 보낸팀
+    public void refuseMatching(Long teamId, Long opponentId) {
+        Team ourTeam = teamRepository.findById(teamId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+        Team opponentTeam = teamRepository.findById(opponentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_TEAM));
+
+        List<Member> members = memberRepository.findByTeam(ourTeam, opponentTeam);
+
+        members.forEach(ourMember -> sendMessage(
+                "지정 매칭 거절!!",
+                String.format("%s팀에서 매칭을 거절하였습니다.", ourTeam.getName()),
+                ourMember.getUser().getFcmToken()
+        ));
+
+    }
+
     public void sendMatchingInfoMessage(String title, String body, String token, Long matchingId) {
         Message message = Message.builder()
                 .setToken(token)

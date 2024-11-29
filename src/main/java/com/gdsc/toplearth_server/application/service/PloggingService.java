@@ -9,11 +9,13 @@ import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
 import com.gdsc.toplearth_server.domain.entity.plogging.type.ELabel;
 import com.gdsc.toplearth_server.domain.entity.region.Region;
+import com.gdsc.toplearth_server.domain.entity.report.Report;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
+import com.gdsc.toplearth_server.infrastructure.repository.report.ReportRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.plogging.CreatePloggingRequestDto;
 import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingRequestDto;
@@ -37,6 +39,7 @@ public class PloggingService {
     private final UserRepositoryImpl userRepositoryImpl;
     private final RegionRepositoryImpl regionRepositoryImpl;
     private final S3Service s3Service;
+    private final ReportRepositoryImpl reportRepositoryImpl;
 
     public UserPloggingStartResponseDto createUserPlogging(
             UUID userId,
@@ -144,5 +147,19 @@ public class PloggingService {
                         throw new CustomException(ErrorCode.INVALID_LABEL_TYPE);
                     }
                 });
+    }
+
+    public void createPloogingReport(UUID userId, Long ploggingId) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        Plogging plogging = ploggingRepositoryImpl.findById(ploggingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_PLOGGING));
+
+        Report report = Report.builder()
+                .plogging(plogging)
+                .user(user)
+                .build();
+        reportRepositoryImpl.save(report);
     }
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -44,6 +45,16 @@ public class Report {
 
     //-------------------------------------------
 
+    @Builder
+    public Report(User user, Plogging plogging) {
+        this.createdAt = LocalDateTime.now();
+        this.isExecuted = false;
+        this.user = user;
+        this.plogging = plogging;
+    }
+
+
+    //-------------------------------------------
     public void updateExecute() {
         this.isExecuted = true;
     }

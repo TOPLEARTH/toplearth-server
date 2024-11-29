@@ -31,7 +31,7 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
 
     Optional<Plogging> findByUserAndId(User user, Long ploggingId);
 
-    @Query("SELECT COALESCE(SUM(p.duration), 0) duration, COALESCE(SUM(p.pickUpCnt), 0) trashCnt, FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m-01') startedAt "
+    @Query("SELECT COALESCE(SUM(p.duration), 0) duration, COALESCE(SUM(p.pickUpCnt), 0) trashCount, FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m') startAt "
             +
             "FROM Plogging p " +
             "GROUP BY FUNCTION('DATE_FORMAT', p.startedAt, '%Y-%m') " +

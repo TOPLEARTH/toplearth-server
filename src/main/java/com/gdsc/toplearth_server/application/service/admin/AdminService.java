@@ -140,10 +140,22 @@ public class AdminService {
             trashCountMap.put(label, count);
         }
 
-        List<AdminInfo> adminInfos = ploggingRepository.ploggingMonthly().stream()
-                .map(adminPloggingProjection -> AdminInfo.of(adminPloggingProjection.getTrashCount(),
-                        adminPloggingProjection.getDuration())
-                ).toList();
+//        Map<String, List<AdminInfo>> adminInfos = ploggingRepository.ploggingMonthly().stream()
+//                .map(adminPloggingProjection -> adminPloggingProjection.getStartAt(),
+//                        AdminInfo.of(adminPloggingProjection.getTrashCount(),
+//                                adminPloggingProjection.getDuration())
+//                ).toList();
+        Map<String, List<AdminInfo>> adminInfos = ploggingRepository.ploggingMonthly().stream()
+                .collect(Collectors.groupingBy(
+                        adminPloggingProjection -> adminPloggingProjection.getStartAt(),
+                        Collectors.mapping(
+                                adminPloggingProjection -> AdminInfo.of(
+                                        adminPloggingProjection.getTrashCount(),
+                                        adminPloggingProjection.getDuration()
+                                ),
+                                Collectors.toList()
+                        )
+                ));
 
         return ReadLabelResponseDto.of(adminInfos, TrashInfoResponseDto.fromTrashCountMap(trashCountMap));
     }
