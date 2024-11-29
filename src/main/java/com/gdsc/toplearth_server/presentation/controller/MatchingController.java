@@ -5,7 +5,9 @@ import com.gdsc.toplearth_server.application.service.matching.MatchingService;
 import com.gdsc.toplearth_server.core.common.CommonResponseDto;
 import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
+import com.gdsc.toplearth_server.presentation.request.matching.VSFinishRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,8 +40,19 @@ public class MatchingController {
     }
 
     // 지정 매칭 수락
-    // @PostMapping("/accept")
+    // @PostMapping("/{teamId}/accept")
+
 
     // 지정 매칭 거절
+    // @PostMapping("/{teamId}/reject")
 
+    // 매칭 종료
+    @PatchMapping("/{matchingId}/end")
+    public CommonResponseDto<?> finishVS(
+            @PathVariable Long matchingId,
+            @RequestBody VSFinishRequestDto vsFinishRequestDto
+    ) {
+        matchingService.finishVS(matchingId, vsFinishRequestDto);
+        return CommonResponseDto.ok(null);
+    }
 }

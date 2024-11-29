@@ -11,4 +11,7 @@ public interface MatchingRepositoryImpl extends JpaRepository<Matching, Long> {
     Integer countByTeamAndWinFlagIsTrue(Team team);
 
     Optional<Matching> findByTeamAndEndedAtIsNull(Team team);
+
+//    @Query("SELECT m FROM Matching m WHERE m.startedAt <= :thresholdTime AND m.endedAt IS NULL")
+//    List<Matching> findOngoingMatchingsOlderThan(@Param("thresholdTime") LocalDateTime thresholdTime);
 }

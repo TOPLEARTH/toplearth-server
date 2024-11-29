@@ -9,14 +9,14 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Configuration
+@Component
 @Slf4j
-public class MatchingScheduler {    // 정각마다 매칭 진행
+public class StartMatchingScheduler {    // 정각마다 매칭 진행
     private final MatchingService matchingService;
     private final RabbitTemplate rabbitTemplate;
 
@@ -27,7 +27,7 @@ public class MatchingScheduler {    // 정각마다 매칭 진행
     // @Scheduled(cron = "0 0 * * * *")
     @Scheduled(cron = "0 */3 * * * *")
     @Transactional
-    public void scheduleMatching() {
+    public void scheduleStartMatching() {
         log.info("Scheduled matching process started at {}", LocalDateTime.now());
 
         try {

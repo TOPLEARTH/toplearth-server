@@ -83,4 +83,14 @@ public class Matching {
                 .opponentTeam(opponentTeam)
                 .build();
     }
+
+    public void finishVS(
+            Boolean winFlag, Long competitionScore, Integer totalPickUpCnt
+    ) {
+        this.endedAt = LocalDateTime.now();
+        this.competitionStatus = false;
+        this.winFlag = winFlag;
+        this.competitionScore = competitionScore;
+        this.totalPickUpCnt = totalPickUpCnt;
+    }
 }

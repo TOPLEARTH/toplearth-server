@@ -9,12 +9,14 @@ import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryImpl;
+import com.gdsc.toplearth_server.presentation.request.matching.VSFinishRequestDto;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -100,6 +102,28 @@ public class MatchingService {
         Matching matching = Matching.fromTeamEntities(team, opponentTeam);
         log.info("Matching created: {} vs {}", team, opponentTeam);
         return matching;
+    }
+
+    /**
+     * 매칭 종료 처리
+     */
+    @Transactional
+    public void finishVS(Long matchingId, VSFinishRequestDto vsFinishRequestDto) {
+        Matching matching = matchingRepositoryImpl.findById(matchingId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MATCH));
+
+        matching.finishVS(
+                vsFinishRequestDto.winFlag(),
+                vsFinishRequestDto.competitionScore(),
+                vsFinishRequestDto.totalPickUpCnt()
+        );
+
+        matchingRepositoryImpl.save(matching);
+
+        fcmService.vsFinish(matching.getTeam().getId(), matching.getOpponentTeam().getId());
+        fcmService.vsFinish(matching.getOpponentTeam().getId(), matching.getTeam().getId());
+
+        log.info("Matching ID: {} has been finished.", matching.getId());
     }
 
 }
