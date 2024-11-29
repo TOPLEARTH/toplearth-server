@@ -21,4 +21,5 @@ public interface UserRepositoryImpl extends JpaRepository<User, UUID>, UserRepos
     Optional<User> findBySocialId(String socialId);
 
     Optional<User> findByNicknameAndSocialId(String nickname, String socialId);
+
 }

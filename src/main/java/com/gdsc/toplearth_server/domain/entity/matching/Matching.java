@@ -2,6 +2,7 @@ package com.gdsc.toplearth_server.domain.entity.matching;
 
 import static jakarta.persistence.FetchType.LAZY;
 
+import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import jakarta.persistence.CascadeType;
@@ -50,6 +51,9 @@ public class Matching {
     @Column(name = "competition_status", nullable = false)
     private Boolean competitionStatus;
 
+    @Column(name = "matching_status", nullable = false)
+    private EMatchingStatus matchingStatus;
+
     //--------------------------------------
 
     @ManyToOne(fetch = LAZY)
@@ -75,6 +79,7 @@ public class Matching {
         this.competitionStatus = true;
         this.team = team;
         this.opponentTeam = opponentTeam;
+        this.matchingStatus = EMatchingStatus.MATCHED;
     }
 
     public static Matching fromTeamEntities(Team team, Team opponentTeam) {
@@ -92,5 +97,6 @@ public class Matching {
         this.winFlag = winFlag;
         this.competitionScore = competitionScore;
         this.totalPickUpCnt = totalPickUpCnt;
+        this.matchingStatus = EMatchingStatus.FINISHED;
     }
 }

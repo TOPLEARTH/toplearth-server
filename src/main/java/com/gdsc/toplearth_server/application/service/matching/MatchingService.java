@@ -1,13 +1,17 @@
 package com.gdsc.toplearth_server.application.service.matching;
 
+import com.gdsc.toplearth_server.application.dto.matching.MatchingStatusResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.MatchingRecentPloggingResponseDto;
 import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.core.constant.Constants;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.matching.Matching;
+import com.gdsc.toplearth_server.domain.entity.matching.type.EMatchingStatus;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
+import com.gdsc.toplearth_server.domain.entity.team.Member;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
+import com.gdsc.toplearth_server.domain.entity.team.type.ETeamRole;
 import com.gdsc.toplearth_server.domain.entity.user.User;
 import com.gdsc.toplearth_server.infrastructure.message.TeamInfoMessage;
 import com.gdsc.toplearth_server.infrastructure.repository.matching.MatchingRepositoryImpl;
@@ -17,6 +21,7 @@ import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryIm
 import com.gdsc.toplearth_server.presentation.request.matching.VSFinishRequestDto;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +41,16 @@ public class MatchingService {
     private final PloggingRepositoryImpl ploggingRepositoryImpl;
 
     // 랜덤 매칭 요청을 큐에 추가, Producer 역할
-    public void addRandomMatchingRequest(TeamInfoMessage teamInfoMessage) {
+    @Transactional
+    public void addRandomMatchingRequest(UUID userId, TeamInfoMessage teamInfoMessage) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER) ; // 리더가 아닌 경우 처리 중단
+        }
+
         log.info("Adding random matching request for teamId: {}", teamInfoMessage.teamId());
+
         // Queue 추가
         rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
                 teamInfoMessage);
@@ -46,17 +59,42 @@ public class MatchingService {
     }
 
     // 지정 매칭 요청
-    public void requestTeamMatching(Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+    @Transactional
+    public void requestTeamMatching(UUID userId, Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER); // 리더가 아닌 경우 처리 중단
+        }
+        // 매칭 요청 알람 전송
         fcmService.selectedMatching(teamInfoMessage.teamId(), opponentTeamId);
     }
 
     // 수락 시 매칭 요청을 큐에 추가, Producer 역할
-    public void addTeamMatchingRequest(Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+    @Transactional
+    public void addTeamMatchingRequest(UUID userId, Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER); // 리더가 아닌 경우 처리 중단
+        }
         log.info("Adding team matching request for teamId: {}", teamInfoMessage.teamId());
         rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
                 teamInfoMessage);
-        // TODO: 매칭 요청 알람 보내기
 
+        // 상대팀과 우리팀에게 매칭 성사 알람 전송
+        fcmService.acceptMatching(teamInfoMessage.teamId(), opponentTeamId);
+    }
+
+    @Transactional
+    public void rejectTeamMatching(UUID userId, Long opponentTeamId, TeamInfoMessage teamInfoMessage) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+        if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER); // 리더가 아닌 경우 처리 중단
+        }
+        log.info("Rejecting team matching request for teamId: {}", teamInfoMessage.teamId());
+        fcmService.refuseMatching(teamInfoMessage.teamId(), opponentTeamId);
     }
 
     /**
@@ -101,6 +139,44 @@ public class MatchingService {
                     fcmService.matchingFinish(team.getId(), opponentTeam.getId());
                     fcmService.matchingFinish(opponentTeam.getId(), team.getId());
                 });
+    }
+
+    /**
+     * 매칭 상태값 반환 메서드
+     */
+    @Transactional
+    public MatchingStatusResponseDto getMatchingStatus(UUID userId) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        // 소속된 팀이 없을 때
+        EMatchingStatus status;
+        Member member = user.getMember() == null ? null : user.getMember();
+        if (member == null) {
+            status = EMatchingStatus.NOT_JOINED;
+            return MatchingStatusResponseDto.of(status);
+        }
+
+        // 소속된 팀은 있지만, 매칭이 없을 때
+        Team team = member.getTeam();
+        Optional<Matching> matching = matchingRepositoryImpl.findByTeamAndEndedAtIsNull(team);
+        if (matching.isEmpty()) {
+            status = EMatchingStatus.DEFAULT;
+            return MatchingStatusResponseDto.of(status);
+        }
+
+        // 매칭이 잡혔을 때
+        if (matching.get().getEndedAt() == null) {
+            status = matching.get().getPloggings().stream()
+                    .anyMatch(plogging -> plogging.getTeam() == team && plogging.getEndedAt() == null)
+                    ? EMatchingStatus.PLOGGING
+                    : EMatchingStatus.MATCHED;
+            return MatchingStatusResponseDto.of(status);
+        }
+
+        // 대결 종료
+        status = EMatchingStatus.FINISHED;
+        return MatchingStatusResponseDto.of(status);
     }
 
     /**

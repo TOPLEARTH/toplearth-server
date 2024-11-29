@@ -119,10 +119,9 @@ public class FcmService {
 
         members.forEach(ourMember -> sendMessage(
                 "지정 매칭 완료!!",
-                String.format("%s팀에서 매칭을 수락하여 지정매칭 되었습니다. 정각에 대결이 시작됩니다.", ourTeam.getName()),
+                String.format("%s팀과 %s팀의 매칭이 성사되었습니다. 정각에 대결이 시작됩니다.", ourTeam.getName(), opponentTeam.getName()),
                 ourMember.getUser().getFcmToken()
         ));
-
     }
 
     //teamId는 수락을 해준팀 opponentId는 맨처음 지정 요청을 보낸팀
@@ -136,7 +135,7 @@ public class FcmService {
 
         members.forEach(ourMember -> sendMessage(
                 "지정 매칭 거절!!",
-                String.format("%s팀에서 매칭을 거절하였습니다.", ourTeam.getName()),
+                String.format("%s팀에서 거절하여 매칭에 실패했습니다.", ourTeam.getName()),
                 ourMember.getUser().getFcmToken()
         ));
 
