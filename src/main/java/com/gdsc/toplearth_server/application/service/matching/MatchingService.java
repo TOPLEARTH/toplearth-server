@@ -144,7 +144,7 @@ public class MatchingService {
     /**
      * 매칭 상태값 반환 메서드
      */
-    @Transactional
+    @Transactional(readOnly = true)
     public MatchingStatusResponseDto getMatchingStatus(UUID userId) {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
@@ -192,8 +192,14 @@ public class MatchingService {
      * 매칭 종료 처리
      */
     @Transactional
-    public void finishVS(Long matchingId, VSFinishRequestDto vsFinishRequestDto) {
-        Matching matching = matchingRepositoryImpl.findById(matchingId)
+    public void finishVS(UUID userId, Long matchingId, VSFinishRequestDto vsFinishRequestDto) {
+        User user = userRepositoryImpl.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
+
+        Team team = user.getMember().getTeam();
+        Matching matching = team.getMatchings().stream()
+                .filter(match -> match.getId().equals(matchingId))
+                .findFirst()
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MATCH));
 
         matching.finishVS(

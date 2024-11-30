@@ -17,6 +17,10 @@ public final class Constants {
     public static final String MATCHING_EXCHANGE_NAME = "matching.exchange";
     public static final String MATCHING_ROUTING_KEY = "matching.key";
 
+    public static final String VS_EXCHANGE_NAME = "vs.exchange";
+    public static final String VS_QUEUE_NAME = "vs.queue";
+    public static final String VS_ROUTING_KEY = "vs.key";
+
     // 인증이 필요 없는 URL
     public static final List<String> NO_NEED_AUTH_URLS = List.of(
             "/api/v1/test/hello",

@@ -81,10 +81,11 @@ public class MatchingController {
     // 매칭 종료
     @PatchMapping("/{matchingId}/end")
     public CommonResponseDto<?> finishVS(
+            @UserId UUID userId,
             @PathVariable Long matchingId,
             @RequestBody VSFinishRequestDto vsFinishRequestDto
     ) {
-        matchingService.finishVS(matchingId, vsFinishRequestDto);
+        matchingService.finishVS(userId, matchingId, vsFinishRequestDto);
         return CommonResponseDto.ok(MatchingStatusResponseDto.of(EMatchingStatus.FINISHED));
     }
 
