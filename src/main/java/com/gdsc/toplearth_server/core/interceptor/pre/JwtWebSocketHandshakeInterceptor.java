@@ -26,6 +26,7 @@ public class JwtWebSocketHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
+        log.info(String.valueOf(request.getURI()));
         String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader != null && authHeader.startsWith(Constants.BEARER_PREFIX)) {
             String token = authHeader.substring(Constants.BEARER_PREFIX.length());
@@ -45,6 +46,6 @@ public class JwtWebSocketHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
                                Exception exception) {
-
+        log.info("WebSocket handshake completed for {}", request.getRemoteAddress());
     }
 }

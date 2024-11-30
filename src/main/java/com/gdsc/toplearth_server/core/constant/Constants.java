@@ -33,6 +33,8 @@ public final class Constants {
 
             "/ws",
             "/ws-stomp",
-            "/ws-stomp/**"
+            "/ws-stomp/**",
+            "/pub/**",
+            "/sub/**"
     );
 }

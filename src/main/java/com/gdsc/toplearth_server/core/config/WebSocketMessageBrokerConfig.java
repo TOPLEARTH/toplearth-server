@@ -1,10 +1,12 @@
 package com.gdsc.toplearth_server.core.config;
 
 import com.gdsc.toplearth_server.core.interceptor.pre.JwtWebSocketChannelInterceptor;
-import com.gdsc.toplearth_server.core.interceptor.pre.JwtWebSocketHandshakeInterceptor;
+import com.gdsc.toplearth_server.core.interceptor.pre.SocketUserIdArgumentResolver;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.util.AntPathMatcher;
@@ -17,7 +19,8 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtWebSocketChannelInterceptor jwtWebSocketChannelInterceptor;
-    private final JwtWebSocketHandshakeInterceptor jwtHandshakeInterceptor;
+    // private final JwtWebSocketHandshakeInterceptor jwtHandshakeInterceptor;
+    private final SocketUserIdArgumentResolver socketUserIdArgumentResolver;
 
     @Value("${spring.rabbitmq.host}")
     private String host;
@@ -34,7 +37,7 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
-                .addInterceptors(jwtHandshakeInterceptor)
+                //.addInterceptors(jwtHandshakeInterceptor)
                 .setAllowedOrigins("*"); // 개발 전용
     }
 
@@ -54,5 +57,10 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(jwtWebSocketChannelInterceptor);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(socketUserIdArgumentResolver);
     }
 }
