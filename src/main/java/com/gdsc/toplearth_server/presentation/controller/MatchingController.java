@@ -90,7 +90,7 @@ public class MatchingController {
 
     //내팀 상대팀 최근 플로깅 조회
     @GetMapping("/plogging")
-    public CommonResponseDto<?> pLogging(
+    public CommonResponseDto<?> recentPlogging(
             @UserId UUID userId
     ) {
         return CommonResponseDto.ok(matchingService.recentPlogging(userId));

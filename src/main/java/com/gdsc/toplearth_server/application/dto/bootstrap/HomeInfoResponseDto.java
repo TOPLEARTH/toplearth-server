@@ -4,14 +4,16 @@ import lombok.Builder;
 
 @Builder
 public record HomeInfoResponseDto(
+        Integer recentPloggingDay,
         Integer joinedTime,
         Integer ploggingMonthlyCount,
         Integer ploggingMonthlyDuration,
         Integer burnedCalories
 ) {
-    public static HomeInfoResponseDto of(Integer joinedTime, Integer ploggingMonthlyCount,
+    public static HomeInfoResponseDto of(Integer recentPloggingDay, Integer joinedTime, Integer ploggingMonthlyCount,
                                          Integer ploggingMonthlyDuration, Integer burnedCalories) {
         return HomeInfoResponseDto.builder()
+                .recentPloggingDay(recentPloggingDay)
                 .joinedTime(joinedTime)
                 .ploggingMonthlyCount(ploggingMonthlyCount)
                 .ploggingMonthlyDuration(ploggingMonthlyDuration)

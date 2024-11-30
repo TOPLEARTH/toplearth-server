@@ -64,9 +64,15 @@ public class TestService {
         PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
-        return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
-                projection.getPloggingMonthlyDuration().intValue(),
-                projection.getBurnedCalories().intValue());
+//        Plogging plogging = ploggingRepositoryImpl.findByUserAndCreatedAt(user);
+//
+//        Integer recentPloggingDay = plogging == null ? -1 :
+//                (int) ChronoUnit.DAYS.between(plogging.getStartedAt(), LocalDate.now());
+
+//        return HomeInfoResponseDto.of(recentPloggingDay, daysBetween, projection.getPloggingMonthlyCount(),
+//                projection.getPloggingMonthlyDuration().intValue(),
+//                projection.getBurnedCalories().intValue());
+        return null;
     }
 
 //    public PloggingInfoResponseDto getQuest(UUID userId) {

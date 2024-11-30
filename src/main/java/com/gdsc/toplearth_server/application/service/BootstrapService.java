@@ -157,7 +157,12 @@ public class BootstrapService {
         PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
                 LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
-        return HomeInfoResponseDto.of(daysBetween, projection.getPloggingMonthlyCount(),
+        Plogging plogging = ploggingRepositoryImpl.findByUserAndCreatedAtRecent(user);
+
+        Integer recentPloggingDay = plogging.getStartedAt() == null ? -1 :
+                Math.toIntExact(ChronoUnit.DAYS.between(plogging.getStartedAt(), LocalDateTime.now()));
+
+        return HomeInfoResponseDto.of(recentPloggingDay, daysBetween, projection.getPloggingMonthlyCount(),
                 projection.getPloggingMonthlyDuration().intValue(),
                 projection.getBurnedCalories().intValue());
     }

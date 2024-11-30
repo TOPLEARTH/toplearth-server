@@ -121,7 +121,7 @@ public class AdminService {
         Report report = reportsRepository.findById(reportId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_REPORT));
         report.updateExecute();
-
+        report.getPlogging().getUser().updateReportCnt();
         return true;
     }
 

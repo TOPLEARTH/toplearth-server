@@ -48,4 +48,11 @@ public interface PloggingRepositoryImpl extends JpaRepository<Plogging, Long> {
             @Param("ourTeamMatching") Matching ourTeamMatching,
             @Param("opponentTeam") Matching opponentTeamMatching
     );
+
+    @Query("SELECT p "
+            + "FROM Plogging p "
+            + "WHERE p.user = :user "
+            + "ORDER BY p.startedAt DESC "
+            + "LIMIT 1")
+    Plogging findByUserAndCreatedAtRecent(@Param("user") User user);
 }

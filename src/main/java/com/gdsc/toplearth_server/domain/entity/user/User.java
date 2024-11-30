@@ -140,4 +140,8 @@ public class User {
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }
+
+    public void updateReportCnt() {
+        this.reportsCnt += 1;
+    }
 }
