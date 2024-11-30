@@ -4,6 +4,7 @@ import com.gdsc.toplearth_server.application.dto.bootstrap.BootstrapResponseDto;
 import com.gdsc.toplearth_server.application.dto.bootstrap.HomeInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.bootstrap.LegacyInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.bootstrap.TrashInfoResponseDto;
+import com.gdsc.toplearth_server.application.dto.matching.MatchingInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.mission.QuestDetailResponseDto;
 import com.gdsc.toplearth_server.application.dto.mission.QuestInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingDetailResponseDto;
@@ -18,6 +19,7 @@ import com.gdsc.toplearth_server.application.dto.team.TeamMemberResponseDto;
 import com.gdsc.toplearth_server.application.dto.user.UserInfoResponseDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
+import com.gdsc.toplearth_server.domain.entity.matching.Matching;
 import com.gdsc.toplearth_server.domain.entity.mission.Mission;
 import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionType;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
@@ -71,6 +73,8 @@ public class BootstrapService {
 
         UserInfoResponseDto userInfoResponseDto = UserInfoResponseDto.fromUserEntity(user);
 
+        MatchingInfoResponseDto matchingInfoResponseDto = getMatchingInfo(user);
+
         List<Mission> dailyQuestList = missionRepositoryImpl.findByUserAndMissionType(user, EMissionType.DAILY);
 
         Map<String, List<QuestDetailResponseDto>> groupedDailyQuests = dailyQuestList.stream()
@@ -123,6 +127,7 @@ public class BootstrapService {
         return BootstrapResponseDto.of(
                 userInfoResponseDto,
                 homeInfoResponseDto,
+                matchingInfoResponseDto,
                 questInfoResponseDto,
                 readTeamResponseDto,
                 ploggingInfoResponseDto,
@@ -245,6 +250,16 @@ public class BootstrapService {
         return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberResponseDtos, memberMonthlyDataMap);
     }
 
+    private MatchingInfoResponseDto getMatchingInfo(User user) {
+        Matching matching = matchingRepositoryImpl.findFirstByTeamOrderByStartedAtDesc(user.getMember().getTeam())
+                .orElse(null);
+        if (matching == null) {
+            return null;
+        }
+        
+        return MatchingInfoResponseDto.of(matching);
+    }
+
     public List<RegionRankInfoResponseDto> getRegionRankInfo() {
         List<RegionRankProjection> projection = regionRepositoryImpl.findAllWithRank();
 
@@ -259,5 +274,6 @@ public class BootstrapService {
                 )
                 .collect(Collectors.toList());
     }
+
 
 }
