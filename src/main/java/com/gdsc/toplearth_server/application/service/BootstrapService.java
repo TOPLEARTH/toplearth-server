@@ -127,7 +127,7 @@ public class BootstrapService {
         return BootstrapResponseDto.of(
                 userInfoResponseDto,
                 homeInfoResponseDto,
-                matchingInfoResponseDto,
+                //matchingInfoResponseDto,
                 questInfoResponseDto,
                 readTeamResponseDto,
                 ploggingInfoResponseDto,
@@ -256,7 +256,7 @@ public class BootstrapService {
         if (matching == null) {
             return null;
         }
-        
+
         return MatchingInfoResponseDto.of(matching);
     }
 

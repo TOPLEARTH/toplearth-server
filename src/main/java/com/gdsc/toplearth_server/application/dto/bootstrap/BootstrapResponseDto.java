@@ -1,6 +1,5 @@
 package com.gdsc.toplearth_server.application.dto.bootstrap;
 
-import com.gdsc.toplearth_server.application.dto.matching.MatchingInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.mission.QuestInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.plogging.PloggingInfoResponseDto;
 import com.gdsc.toplearth_server.application.dto.region.RegionRankInfoResponseDto;
@@ -14,7 +13,7 @@ import lombok.Builder;
 public record BootstrapResponseDto(
         UserInfoResponseDto userInfo,
         HomeInfoResponseDto homeInfo,
-        MatchingInfoResponseDto matchingRealTimeInfo,
+        //MatchingInfoResponseDto matchingRealTimeInfo,
         QuestInfoResponseDto questInfo,
         ReadTeamResponseDto teamInfo,
         PloggingInfoResponseDto ploggingInfo,
@@ -24,7 +23,7 @@ public record BootstrapResponseDto(
     public static BootstrapResponseDto of(
             UserInfoResponseDto userInfo,
             HomeInfoResponseDto homInfo,
-            MatchingInfoResponseDto matchingRealTimeInfo,
+            //MatchingInfoResponseDto matchingRealTimeInfo,
             QuestInfoResponseDto questInfo,
             ReadTeamResponseDto teamInfo,
             PloggingInfoResponseDto ploggingInfo,
@@ -34,7 +33,7 @@ public record BootstrapResponseDto(
         return BootstrapResponseDto.builder()
                 .userInfo(userInfo)
                 .homeInfo(homInfo)
-                .matchingRealTimeInfo(matchingRealTimeInfo)
+                //.matchingRealTimeInfo(matchingRealTimeInfo)
                 .questInfo(questInfo)
                 .teamInfo(teamInfo)
                 .ploggingInfo(ploggingInfo)
