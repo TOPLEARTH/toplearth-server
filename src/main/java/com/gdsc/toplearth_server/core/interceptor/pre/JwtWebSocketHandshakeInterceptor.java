@@ -38,7 +38,7 @@ public class JwtWebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
             return true;
         } else {
-            throw new CustomException(ErrorCode.ENPTY_AUTHENTICATION);
+            throw new CustomException(ErrorCode.EMPTY_AUTHENTICATION);
         }
     }
 

@@ -21,7 +21,7 @@ public class HttpUserIdInterceptor implements HandlerInterceptor {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            throw new CustomException(ErrorCode.ENPTY_AUTHENTICATION);
+            throw new CustomException(ErrorCode.EMPTY_AUTHENTICATION);
         }
 
 

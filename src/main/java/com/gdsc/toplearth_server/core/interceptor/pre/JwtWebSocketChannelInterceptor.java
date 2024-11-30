@@ -12,7 +12,6 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -38,8 +37,9 @@ public class JwtWebSocketChannelInterceptor implements ChannelInterceptor {
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userId, null, null);
 
+                // WebSocket 세션에 인증 정보 저장
                 accessor.setUser(authentication);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                log.info("WebSocket connected for userId: {}", userId);
             } else {
                 throw new IllegalArgumentException("No JWT token found in request headers");
             }

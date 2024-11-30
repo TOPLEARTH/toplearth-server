@@ -46,20 +46,20 @@ public class RabbitMQConfig {
         return new Queue(Constants.MATCHING_QUEUE_NAME, true);
     }
 
-    @Bean
-    public TopicExchange vsExchange() {
-        return new TopicExchange(Constants.VS_EXCHANGE_NAME, true, false);
-    }
-
-    @Bean
-    public Binding vsBinding(Queue vsQueue, TopicExchange vsExchange) {
-        return BindingBuilder.bind(vsQueue).to(vsExchange).with(Constants.VS_ROUTING_KEY);
-    }
-
-    @Bean
-    public Queue vsQueue() {
-        return new Queue(Constants.VS_QUEUE_NAME, true);
-    }
+//    @Bean
+//    public TopicExchange vsExchange() {
+//        return new TopicExchange(Constants.VS_EXCHANGE_NAME, true, false);
+//    }
+//
+//    @Bean
+//    public Binding vsBinding(Queue vsQueue, TopicExchange vsExchange) {
+//        return BindingBuilder.bind(vsQueue).to(vsExchange).with(Constants.VS_ROUTING_KEY);
+//    }
+//
+//    @Bean
+//    public Queue vsQueue() {
+//        return new Queue(Constants.VS_QUEUE_NAME, true);
+//    }
 
     // RabbitMQ Template, 스프링 부트에서 rabbitMQ 명령어를 사용하기 위함
     @Bean
