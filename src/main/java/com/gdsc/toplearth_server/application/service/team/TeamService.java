@@ -107,7 +107,8 @@ public class TeamService {
                         )
                 ));
 
-        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberResponseDtos, memberMonthlyDataMap);
+        return ReadTeamResponseDto.of(team.getId(), team.getCode(), team.getName(), matchCnt, winCnt,
+                memberResponseDtos, memberMonthlyDataMap);
     }
 
     //팀목록 검색

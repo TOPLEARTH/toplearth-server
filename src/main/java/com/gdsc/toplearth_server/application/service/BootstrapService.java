@@ -164,12 +164,18 @@ public class BootstrapService {
 
         Plogging plogging = ploggingRepositoryImpl.findByUserAndCreatedAtRecent(user);
 
-        Integer recentPloggingDay = plogging.getStartedAt() == null ? -1 :
-                Math.toIntExact(ChronoUnit.DAYS.between(plogging.getStartedAt(), LocalDateTime.now()));
+        if (plogging != null) {
+            Integer recentPloggingDay = plogging.getStartedAt() == null ? -1 :
+                    Math.toIntExact(ChronoUnit.DAYS.between(plogging.getStartedAt(), LocalDateTime.now()));
 
-        return HomeInfoResponseDto.of(recentPloggingDay, daysBetween, projection.getPloggingMonthlyCount(),
+            return HomeInfoResponseDto.of(recentPloggingDay, daysBetween, projection.getPloggingMonthlyCount(),
+                    projection.getPloggingMonthlyDuration().intValue(),
+                    projection.getBurnedCalories().intValue());
+        }
+        return HomeInfoResponseDto.of(-1, daysBetween, projection.getPloggingMonthlyCount(),
                 projection.getPloggingMonthlyDuration().intValue(),
                 projection.getBurnedCalories().intValue());
+
     }
 
     private LegacyInfoResponseDto getLegacyInfo() {
@@ -198,7 +204,7 @@ public class BootstrapService {
     private ReadTeamResponseDto getReadTeam(User user) {
         Team team = user.getMember() != null ? user.getMember().getTeam() : null;
         if (team == null) {
-            return null; // 유저가 팀이 없으면 null 반환
+            return ReadTeamResponseDto.builder().build();
         }
 
         Integer matchCnt = matchingRepositoryImpl.countByTeam(team); // 유저가 속한 팀의 매치 횟수
@@ -212,6 +218,11 @@ public class BootstrapService {
 
         List<Plogging> ploggingList = ploggingRepositoryImpl.findByYearAndTeam(team.getCreatedAt().getYear(),
                 team); // 플로깅을 시작한 연도와 유저의 팀을 기준으로 플로깅 정보를 불러온다.
+
+        if (ploggingList == null) {
+            return ReadTeamResponseDto.of(team.getId(), team.getCode(), team.getName(), matchCnt, winCnt,
+                    memberResponseDtos, null);
+        }
 
         Map<YearMonth, ReadTeamStatisticsResponseDto> memberMonthlyDataMap = ploggingList.stream()
                 .collect(Collectors.groupingBy(
@@ -247,17 +258,25 @@ public class BootstrapService {
                         )
                 ));
 
-        return ReadTeamResponseDto.of(team, matchCnt, winCnt, memberResponseDtos, memberMonthlyDataMap);
+        return ReadTeamResponseDto.of(team.getId(), team.getCode(), team.getName(), matchCnt, winCnt,
+                memberResponseDtos, memberMonthlyDataMap);
     }
 
     private MatchingInfoResponseDto getMatchingInfo(User user) {
-        Matching matching = matchingRepositoryImpl.findFirstByTeamOrderByStartedAtDesc(user.getMember().getTeam())
+        if (user.getMember() == null) {
+            return MatchingInfoResponseDto.builder().build();
+        }
+        Team team = user.getMember().getTeam();
+        Matching matching = matchingRepositoryImpl.findFirstByTeamOrderByStartedAtDesc(team)
                 .orElse(null);
         if (matching == null) {
-            return null;
+            return MatchingInfoResponseDto.builder().build();
         }
 
-        return MatchingInfoResponseDto.of(matching);
+        return MatchingInfoResponseDto.of(
+                matching.getStartedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                matching.getTeam().getName(),
+                matching.getOpponentTeam().getName());
     }
 
     public List<RegionRankInfoResponseDto> getRegionRankInfo() {
