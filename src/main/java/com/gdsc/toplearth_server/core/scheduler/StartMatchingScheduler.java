@@ -33,11 +33,13 @@ public class StartMatchingScheduler {    // 정각마다 매칭 진행
         try {
             // RabbitMQ 큐에서 모든 매칭 요청 가져오기
             List<TeamInfoMessage> requests = new ArrayList<>();
+            log.info("Fetching matching requests from RabbitMQ...");
             Object message;
 
             while ((message = rabbitTemplate.receiveAndConvert(Constants.MATCHING_QUEUE_NAME)) != null) {
                 if (message instanceof TeamInfoMessage teamInfoMessage) {
                     requests.add(teamInfoMessage);
+                    log.info("Fetched matching request from RabbitMQ: {}", teamInfoMessage.teamId());
                 } else {
                     log.warn("Invalid message type in queue: {}", message);
                 }

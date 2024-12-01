@@ -50,10 +50,16 @@ public class MatchingService {
         }
 
         log.info("Adding random matching request for teamId: {}", teamInfoMessage.teamId());
-
         // Queue 추가
-        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
-                teamInfoMessage);
+        try {
+            rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY, teamInfoMessage);
+            log.info("Message successfully sent to RabbitMQ: {}", teamInfoMessage);
+        } catch (Exception e) {
+            log.error("Failed to send message to RabbitMQ: {}", e.getMessage(), e);
+        }
+
+//        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
+//                teamInfoMessage);
         // 매칭 시작 알람 전송
         fcmService.randomMatchingStart(teamInfoMessage.teamId());
     }

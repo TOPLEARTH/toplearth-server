@@ -14,7 +14,6 @@ public interface MatchingRepositoryImpl extends JpaRepository<Matching, Long> {
 
     Optional<Matching> findByTeamAndEndedAtIsNull(Team team);
 
-    Optional<Matching> findByTeam(Team team);
 
     @Query("SELECT m "
             + "FROM Matching m "

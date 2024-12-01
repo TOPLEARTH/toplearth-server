@@ -2,6 +2,7 @@ package com.gdsc.toplearth_server.core.config;
 
 import com.gdsc.toplearth_server.core.interceptor.pre.JwtWebSocketChannelInterceptor;
 import com.gdsc.toplearth_server.core.interceptor.pre.SocketUserIdArgumentResolver;
+import com.gdsc.toplearth_server.infrastructure.message.GlobalSocketErrorHandler;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +22,7 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     private final JwtWebSocketChannelInterceptor jwtWebSocketChannelInterceptor;
     // private final JwtWebSocketHandshakeInterceptor jwtHandshakeInterceptor;
     private final SocketUserIdArgumentResolver socketUserIdArgumentResolver;
+    private final GlobalSocketErrorHandler globalSocketErrorHandler;
 
     @Value("${spring.rabbitmq.host}")
     private String host;

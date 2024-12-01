@@ -1,11 +1,9 @@
 package com.gdsc.toplearth_server.infrastructure.message;
 
 import com.gdsc.toplearth_server.core.annotation.UserId;
-import com.gdsc.toplearth_server.core.constant.Constants;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -32,8 +30,8 @@ public class StompMessageController {
     }
 
     // Only Debugging
-    @RabbitListener(queues = Constants.MATCHING_QUEUE_NAME)
-    public void receive(TeamInfoMessage teamInfoMessage) {
-        log.info("received : {}", teamInfoMessage);
-    }
+//    @RabbitListener(queues = Constants.MATCHING_QUEUE_NAME)
+//    public void receive(TeamInfoMessage teamInfoMessage) {
+//        log.info("received : {}", teamInfoMessage);
+//    }
 }
