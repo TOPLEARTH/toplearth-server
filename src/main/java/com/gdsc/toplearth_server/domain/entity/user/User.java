@@ -110,6 +110,7 @@ public class User {
         this.refreshToken = null;
         this.credit = 0;
         this.createdAt = LocalDateTime.now();
+        this.reportsCnt = 0;
     }
 
     public static User toUserEntity(String socialId, String nickname, EUserRole userRole, ELoginProvider provider,

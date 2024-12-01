@@ -34,7 +34,7 @@ public record BootstrapResponseDto(
         return BootstrapResponseDto.builder()
                 .userInfo(userInfo)
                 .homeInfo(homInfo)
-                //.matchingRealTimeInfo(matchingRealTimeInfo)
+                .matchingRealTimeInfo(matchingRealTimeInfo)
                 .questInfo(questInfo)
                 .teamInfo(teamInfo)
                 .ploggingInfo(ploggingInfo)
