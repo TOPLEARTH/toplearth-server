@@ -1,6 +1,7 @@
 package com.gdsc.toplearth_server.application.service.matching;
 
 import com.gdsc.toplearth_server.application.dto.matching.MatchingStatusResponseDto;
+import com.gdsc.toplearth_server.application.dto.matching.RecentMatchingInfo;
 import com.gdsc.toplearth_server.application.dto.plogging.MatchingRecentPloggingResponseDto;
 import com.gdsc.toplearth_server.application.service.FcmService;
 import com.gdsc.toplearth_server.core.constant.Constants;
@@ -46,13 +47,14 @@ public class MatchingService {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
         if (!user.getMember().getTeamRole().equals(ETeamRole.LEADER)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER) ; // 리더가 아닌 경우 처리 중단
+            throw new CustomException(ErrorCode.ACCESS_DENIED_LEADER); // 리더가 아닌 경우 처리 중단
         }
 
         log.info("Adding random matching request for teamId: {}", teamInfoMessage.teamId());
         // Queue 추가
         try {
-            rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY, teamInfoMessage);
+            rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
+                    teamInfoMessage);
             log.info("Message successfully sent to RabbitMQ: {}", teamInfoMessage);
         } catch (Exception e) {
             log.error("Failed to send message to RabbitMQ: {}", e.getMessage(), e);
@@ -223,7 +225,7 @@ public class MatchingService {
     }
 
     @Transactional(readOnly = true)
-    public List<MatchingRecentPloggingResponseDto> recentPlogging(UUID userId) {
+    public RecentMatchingInfo recentPlogging(UUID userId) {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
@@ -239,9 +241,10 @@ public class MatchingService {
         List<Plogging> ploggings = ploggingRepositoryImpl.findByOurTeamMatchingWithMatching(ourTeamMatching,
                 opponentTeamMatching);
 
-        return ploggings.stream()
+        List<MatchingRecentPloggingResponseDto> matchingRecentPloggingResponseDtos = ploggings.stream()
                 .map(plogging -> MatchingRecentPloggingResponseDto.fromPloggingEntity(plogging,
                         plogging.getPloggingImages()))
                 .toList();
+        return RecentMatchingInfo.of(matchingRecentPloggingResponseDtos);
     }
 }
