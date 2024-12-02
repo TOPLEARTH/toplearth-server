@@ -12,7 +12,9 @@ import com.gdsc.toplearth_server.infrastructure.repository.team.TeamRepositoryIm
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -57,7 +59,8 @@ public class FcmService {
                 "매칭 완료!!",
                 String.format("%s팀과의 대결이 시작되었습니다.", opponentTeam.getName()),
                 member.getUser().getFcmToken(),
-                matching.getId()
+                matching.getId(),
+                matching.getOpponentTeam().getName()
         ));
     }
 
@@ -77,7 +80,8 @@ public class FcmService {
                 "대결 종료",
                 String.format("%s팀과의 대결에서 %s하였습니다.", opponentTeam.getName(), matching.getWinFlag() ? "승리" : "패배"),
                 member.getUser().getFcmToken(),
-                matching.getId()
+                matching.getId(),
+                matching.getOpponentTeam().getName()
         ));
     }
 
@@ -141,14 +145,17 @@ public class FcmService {
 
     }
 
-    public void sendMatchingInfoMessage(String title, String body, String token, Long matchingId) {
+    public void sendMatchingInfoMessage(String title, String body, String token, Long matchingId, String opponentName) {
+        Map<String, String> putData = new HashMap<>();
+        putData.put("matchingId", String.valueOf(matchingId));
+        putData.put("opponentName", opponentName);
         Message message = Message.builder()
                 .setToken(token)
                 .setNotification(Notification.builder()
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .putData("matchingId", String.valueOf(matchingId))
+                .putAllData(putData)
                 .build();
 
         String response = null;
