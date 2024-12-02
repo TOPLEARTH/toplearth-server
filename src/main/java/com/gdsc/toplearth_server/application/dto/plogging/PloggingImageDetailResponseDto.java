@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record PloggingImageDetailResponseDto(
-        String ploggingImageId, // 플로깅 이미지 ID
+        Long ploggingImageId, // 플로깅 이미지 ID
         String imageUrl, // 플로깅 이미지 URL
         String createdAt, // 플로깅 이미지 생성일
         Double latitude, // 플로깅 이미지 위도
@@ -15,7 +15,7 @@ public record PloggingImageDetailResponseDto(
 ) {
     public static PloggingImageDetailResponseDto fromPloggingImageEntity(PloggingImage ploggingImage) {
         return PloggingImageDetailResponseDto.builder()
-                .ploggingImageId(ploggingImage.getId() == null ? null : ploggingImage.getId().toString())
+                .ploggingImageId(ploggingImage.getId() == null ? null : ploggingImage.getId())
                 .imageUrl(ploggingImage.getImage())
                 .createdAt(ploggingImage.getCreatedAt() == null ? null : ploggingImage.getCreatedAt().toString())
                 .latitude(ploggingImage.getLatitude())
