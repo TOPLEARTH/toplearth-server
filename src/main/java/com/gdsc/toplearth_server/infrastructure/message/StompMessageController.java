@@ -30,7 +30,8 @@ public class StompMessageController {
     }
 
     // Only Debugging
-//    @RabbitListener(queues = Constants.MATCHING_QUEUE_NAME)
+    // 리스너 만드는 순간 큐에 삽입 시 메시지가 바로 소비됨.
+//    @RabbitListener(queues = Constants.VS_QUEUE_NAME)
 //    public void receive(TeamInfoMessage teamInfoMessage) {
 //        log.info("received : {}", teamInfoMessage);
 //    }

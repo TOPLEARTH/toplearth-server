@@ -145,7 +145,6 @@ public class MatchingService {
                     Team team = matching.getTeam();
                     Team opponentTeam = matching.getOpponentTeam();
                     fcmService.matchingFinish(team.getId(), opponentTeam.getId());
-                    fcmService.matchingFinish(opponentTeam.getId(), team.getId());
                 });
     }
 
@@ -204,10 +203,7 @@ public class MatchingService {
         User user = userRepositoryImpl.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_USER));
 
-        Team team = user.getMember().getTeam();
-        Matching matching = team.getMatchings().stream()
-                .filter(match -> match.getId().equals(matchingId))
-                .findFirst()
+        Matching matching = matchingRepositoryImpl.findById(matchingId)
                 .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MATCH));
 
         matching.finishVS(

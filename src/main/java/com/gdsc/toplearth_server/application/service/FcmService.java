@@ -101,7 +101,7 @@ public class FcmService {
 
         opponentMembers.forEach(opponentMember -> sendMessage(
                 "지정 매칭 요청!!",
-                String.format("%s팀에게 의해서 매칭 요청이 왔습니다.", team.getName()),
+                String.format("%s팀에게 매칭 요청이 왔습니다.", team.getName()),
                 opponentMember.getUser().getFcmToken()
         ));
 
@@ -148,7 +148,7 @@ public class FcmService {
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .putData("matchId", String.valueOf(matchingId))
+                .putData("matchingId", String.valueOf(matchingId))
                 .build();
 
         String response = null;
@@ -169,7 +169,7 @@ public class FcmService {
                         .setTitle(title)
                         .setBody(body)
                         .build())
-                .putData("mingiId", "mingi_jeok")
+                //.putData("mingiId", "mingi_jeok")
                 .build();
 
         String response = null;

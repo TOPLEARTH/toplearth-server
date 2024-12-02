@@ -25,7 +25,7 @@ public class StartMatchingScheduler {    // 정각마다 매칭 진행
      * cron 표현식: "0 0 * * * *" -> 매 정각(매 시 0분 0초)
      */
     // @Scheduled(cron = "0 0 * * * *")
-    @Scheduled(cron = "0 */3 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     @Transactional
     public void scheduleStartMatching() {
         log.info("Scheduled matching process started at {}", LocalDateTime.now());

@@ -1,6 +1,7 @@
 package com.gdsc.toplearth_server.core.config;
 
 import com.gdsc.toplearth_server.core.interceptor.pre.JwtWebSocketChannelInterceptor;
+import com.gdsc.toplearth_server.core.interceptor.pre.JwtWebSocketHandshakeInterceptor;
 import com.gdsc.toplearth_server.core.interceptor.pre.SocketUserIdArgumentResolver;
 import com.gdsc.toplearth_server.infrastructure.message.GlobalSocketErrorHandler;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtWebSocketChannelInterceptor jwtWebSocketChannelInterceptor;
-    // private final JwtWebSocketHandshakeInterceptor jwtHandshakeInterceptor;
+    private final JwtWebSocketHandshakeInterceptor jwtHandshakeInterceptor;
     private final SocketUserIdArgumentResolver socketUserIdArgumentResolver;
     private final GlobalSocketErrorHandler globalSocketErrorHandler;
 
@@ -39,8 +40,9 @@ public class WebSocketMessageBrokerConfig implements WebSocketMessageBrokerConfi
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws-stomp")
-                //.addInterceptors(jwtHandshakeInterceptor)
+                .addInterceptors(jwtHandshakeInterceptor)
                 .setAllowedOrigins("*"); // 개발 전용
+        registry.setErrorHandler(globalSocketErrorHandler);
     }
 
     @Override
