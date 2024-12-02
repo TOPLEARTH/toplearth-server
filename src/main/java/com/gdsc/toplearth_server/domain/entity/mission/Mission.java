@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
@@ -66,11 +67,48 @@ public class Mission {
 
     //-------------------------------------------
 
+    @Builder(access = AccessLevel.PRIVATE)
+    public Mission(EMissionName missionName, EMissionType missionType, Integer target, Integer credit, User user) {
+        this.missionName = missionName;
+        this.missionType = missionType;
+        this.current = 0;
+        this.target = target;
+        this.createdAt = LocalDateTime.now();
+        this.isCompleted = false;
+        this.credit = credit;
+        this.user = user;
+    }
 
+    public static Mission createMission(
+            EMissionName missionName, EMissionType missionType, Integer target, Integer credit, User user
+    ) {
+        return Mission.builder()
+                .missionName(missionName)
+                .missionType(missionType)
+                .target(target)
+                .credit(credit)
+                .user(user)
+                .build();
+    }
 
     //-------------------------------------------
 
     public Integer getProgressRate() {
         return (int) ((double) current / target * 100);
+    }
+
+    public void updatePloggingMission(Double distance) {
+        int current = this.current + (int) Math.round(distance);
+        this.current += current;
+        this.isCompleted = current >= target;
+        this.completedAt = isCompleted ? LocalDateTime.now() : null;
+    }
+
+    public void updateMission(Integer cnt) {
+        int current = this.current + cnt;
+        this.current += current;
+        this.isCompleted = current >= target;
+        this.completedAt = isCompleted ? LocalDateTime.now() : null;
+
     }
 }

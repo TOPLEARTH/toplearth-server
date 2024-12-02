@@ -5,6 +5,8 @@ import com.gdsc.toplearth_server.application.dto.plogging.UserPloggingFinishResp
 import com.gdsc.toplearth_server.application.dto.plogging.UserPloggingStartResponseDto;
 import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
+import com.gdsc.toplearth_server.domain.entity.mission.Mission;
+import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionName;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
 import com.gdsc.toplearth_server.domain.entity.plogging.type.ELabel;
@@ -12,6 +14,7 @@ import com.gdsc.toplearth_server.domain.entity.region.Region;
 import com.gdsc.toplearth_server.domain.entity.report.Report;
 import com.gdsc.toplearth_server.domain.entity.team.Team;
 import com.gdsc.toplearth_server.domain.entity.user.User;
+import com.gdsc.toplearth_server.infrastructure.repository.mission.MissionRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingImagesRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.plogging.PloggingRepositoryImpl;
 import com.gdsc.toplearth_server.infrastructure.repository.region.RegionRepositoryImpl;
@@ -19,6 +22,7 @@ import com.gdsc.toplearth_server.infrastructure.repository.report.ReportReposito
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.plogging.CreatePloggingRequestDto;
 import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingRequestDto;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,6 +44,7 @@ public class PloggingService {
     private final RegionRepositoryImpl regionRepositoryImpl;
     private final S3Service s3Service;
     private final ReportRepositoryImpl reportRepositoryImpl;
+    private final MissionRepositoryImpl missionRepositoryImpl;
 
     public UserPloggingStartResponseDto createUserPlogging(
             UUID userId,
@@ -92,6 +97,14 @@ public class PloggingService {
                         .map(PloggingImageResponseDto::fromPloggingImageEntity)
                         .collect(Collectors.toList());
 
+        Mission ploggingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+                user, EMissionName.PLOGGING, false, LocalDate.now()
+        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
+
+        Mission trashPickUpMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+                user, EMissionName.PICKUP, false, LocalDate.now()
+        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
+
         // 플로깅 종료
         plogging.updatePlogging(
                 updatePloggingRequestDto.distance(),
@@ -99,6 +112,10 @@ public class PloggingService {
                 updatePloggingRequestDto.duration(),
                 updatePloggingRequestDto.burnedCalories()
         );
+
+        // 미션 업데이트
+        ploggingMission.updatePloggingMission(updatePloggingRequestDto.distance());
+        trashPickUpMission.updateMission(updatePloggingRequestDto.pickUpCnt());
 
         // 지역 총 점수 업데이트
         Region region = plogging.getRegion();
@@ -147,6 +164,12 @@ public class PloggingService {
                         throw new CustomException(ErrorCode.INVALID_LABEL_TYPE);
                     }
                 });
+
+        // 미션 업데이트
+        Mission labelingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+                user, EMissionName.LABELING, false, LocalDate.now()
+        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
+        labelingMission.updateMission(ploggingImageIds.size());
     }
 
     public void createPloogingReport(UUID userId, Long ploggingId) {

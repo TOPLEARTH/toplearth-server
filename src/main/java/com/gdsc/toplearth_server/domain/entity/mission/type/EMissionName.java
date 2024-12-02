@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum EMissionName {
-    FLOGGING("FLOGGING"),
+    PLOGGING("PLOGGING"),
     PICKUP("PICKUP"),
     LABELING("LABELING");
 

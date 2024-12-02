@@ -21,6 +21,7 @@ import com.gdsc.toplearth_server.core.exception.CustomException;
 import com.gdsc.toplearth_server.core.exception.ErrorCode;
 import com.gdsc.toplearth_server.domain.entity.matching.Matching;
 import com.gdsc.toplearth_server.domain.entity.mission.Mission;
+import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionName;
 import com.gdsc.toplearth_server.domain.entity.mission.type.EMissionType;
 import com.gdsc.toplearth_server.domain.entity.plogging.Plogging;
 import com.gdsc.toplearth_server.domain.entity.plogging.PloggingImage;
@@ -42,18 +43,22 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BootstrapService {
     private final UserRepositoryImpl userRepositoryImpl;
     private final MissionRepositoryImpl missionRepositoryImpl;
@@ -84,7 +89,7 @@ public class BootstrapService {
                                     QuestDetailResponseDto.fromMissionEntity(null, mission.getTarget(), null, null,
                                             mission.getCurrent(), null, mission.getCreatedAt().toString(),
                                             mission.getCredit());
-                            case FLOGGING -> QuestDetailResponseDto.fromMissionEntity(mission.getTarget(), null, null,
+                            case PLOGGING -> QuestDetailResponseDto.fromMissionEntity(mission.getTarget(), null, null,
                                     mission.getCurrent(), null, null, mission.getCreatedAt().toString(),
                                     mission.getCredit());
                             case LABELING ->
@@ -96,6 +101,14 @@ public class BootstrapService {
                     LocalDateTime createdDate = LocalDateTime.parse(quest.createdAt());
                     return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
                 }));
+
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        // TODO: 오늘 날짜에 미션이 없는 경우 추가 -> 나중에 00시 미션 자동 생성 스케줄링으로 변경하면 좋을 듯
+        if (!groupedDailyQuests.containsKey(today)) {
+            createDailyMissions(user, today);
+            log.info("New daily missions created for user {} on {}", user.getId(), today);
+        }
 
         QuestInfoResponseDto questInfoResponseDto = QuestInfoResponseDto.fromEntityList(groupedDailyQuests);
 
@@ -134,6 +147,22 @@ public class BootstrapService {
                 legacyInfoResponseDto,
                 regionRankInfoResponseDtos
         );
+    }
+
+    private void createDailyMissions(User user, String date) {
+        List<Mission> newMissions = new ArrayList<>();
+
+        // 랜덤 target 생성 로직
+        int pickupTarget = ThreadLocalRandom.current().nextInt(1, 11);
+        int ploggingTarget = ThreadLocalRandom.current().nextInt(1, 11);
+        int labelingTarget = ThreadLocalRandom.current().nextInt(1, 11);
+
+        // Daily 미션 생성
+        newMissions.add(Mission.createMission(EMissionName.PICKUP, EMissionType.DAILY, pickupTarget, 10, user));
+        newMissions.add(Mission.createMission(EMissionName.PLOGGING, EMissionType.DAILY, ploggingTarget, 10, user));
+        newMissions.add(Mission.createMission(EMissionName.LABELING, EMissionType.DAILY, labelingTarget, 10, user));
+
+        missionRepositoryImpl.saveAll(newMissions);
     }
 
     // 각각의 라벨링된 쓰레기 개수 조회
