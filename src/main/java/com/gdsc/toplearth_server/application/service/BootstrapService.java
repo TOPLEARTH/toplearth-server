@@ -189,7 +189,7 @@ public class BootstrapService {
         Integer daysBetween = Math.toIntExact(ChronoUnit.DAYS.between(user.getCreatedAt(), LocalDateTime.now()));
 
         PloggingProjection projection = ploggingRepositoryImpl.findByUserAndCreatedAt(user,
-                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM")));
+                LocalDate.now().plusMonths(-1).format(DateTimeFormatter.ofPattern("yyyy-MM")));
 
         Plogging plogging = ploggingRepositoryImpl.findByUserAndCreatedAtRecent(user);
 
