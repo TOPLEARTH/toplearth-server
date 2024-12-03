@@ -14,11 +14,13 @@ import com.gdsc.toplearth_server.domain.entity.user.type.EUserRole;
 import com.gdsc.toplearth_server.infrastructure.repository.user.UserRepositoryImpl;
 import com.gdsc.toplearth_server.presentation.request.user.FcmTokenRequestDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthLoginService {
     private final UserRepositoryImpl userRepositoryImpl;
     private final OAuth2Util oAuth2Util;
@@ -37,6 +39,7 @@ public class AuthLoginService {
                         ELoginProvider.KAKAO,
                         fcmToken
                 ));
+        log.info("fcm Token!!!: {}", fcmToken);
         user.updateFcmToken(fcmToken);
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }
@@ -54,6 +57,7 @@ public class AuthLoginService {
                         ELoginProvider.APPLE,
                         fcmToken
                 ));
+        log.info("fcm Token!!!: {}", fcmToken);
         user.updateFcmToken(fcmToken);
         return jwtUtil.generateTokens(user.getId(), user.getUserRole());
     }

@@ -60,8 +60,6 @@ public class MatchingService {
             log.error("Failed to send message to RabbitMQ: {}", e.getMessage(), e);
         }
 
-//        rabbitTemplate.convertAndSend(Constants.MATCHING_EXCHANGE_NAME, Constants.MATCHING_ROUTING_KEY,
-//                teamInfoMessage);
         // 매칭 시작 알람 전송
         fcmService.randomMatchingStart(teamInfoMessage.teamId());
     }
@@ -110,11 +108,6 @@ public class MatchingService {
      */
     public void processRandomMatchingRequests(List<TeamInfoMessage> requests) {
         log.info("Processing matching requests...");
-
-        if (requests.size() < 2) {
-            log.warn("Not enough teams for matching. At least two teams are required.");
-            return; // 짝이 없는 경우 처리 중단
-        }
 
         // 팀 매칭 처리
         List<Matching> matchedPairs = new ArrayList<>();

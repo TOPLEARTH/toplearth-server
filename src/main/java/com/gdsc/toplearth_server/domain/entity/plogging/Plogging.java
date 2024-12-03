@@ -125,4 +125,9 @@ public class Plogging {
     public void updateImage(String image) {
         this.image = image;
     }
+
+    public void updateRealTimePloggingInfo(Double distance, Integer pickUpCnt) {
+        this.distance += distance;
+        this.pickUpCnt += pickUpCnt;
+    }
 }
