@@ -9,13 +9,15 @@ import lombok.Builder;
 public record TeamMemberResponseDto(
         Long id,
         String name,
-        ETeamRole role
+        ETeamRole role,
+        Boolean isActive
 ) {
     public static TeamMemberResponseDto of(Member member) {
         return TeamMemberResponseDto.builder()
                 .id(member.getId())
                 .name(member.getUser().getNickname())
                 .role(member.getTeamRole())
+                .isActive(member.getIsActive())
                 .build();
     }
 }

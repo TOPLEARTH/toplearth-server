@@ -67,4 +67,9 @@ public class Member {
                 .build();
     }
 
+    public Boolean getIsActive() {
+        return user.getPlogging().stream()
+                .filter(plogging -> plogging.getTeam().equals(team)) // team과 일치하는 플로깅 필터링
+                .anyMatch(plogging -> plogging.getStartedAt() != null && plogging.getEndedAt() == null); // 활성 상태 확인
+    }
 }

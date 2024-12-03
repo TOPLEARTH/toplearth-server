@@ -24,6 +24,7 @@ import com.gdsc.toplearth_server.presentation.request.plogging.CreatePloggingReq
 import com.gdsc.toplearth_server.presentation.request.plogging.UpdatePloggingRequestDto;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -97,13 +98,13 @@ public class PloggingService {
                         .map(PloggingImageResponseDto::fromPloggingImageEntity)
                         .collect(Collectors.toList());
 
-        Mission ploggingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+        Optional<Mission> ploggingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
                 user, EMissionName.PLOGGING, false, LocalDate.now()
-        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
+        );
 
-        Mission trashPickUpMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+        Optional<Mission> trashPickUpMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
                 user, EMissionName.PICKUP, false, LocalDate.now()
-        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
+        );
 
         // 플로깅 종료
         plogging.updatePlogging(
@@ -114,8 +115,8 @@ public class PloggingService {
         );
 
         // 미션 업데이트
-        ploggingMission.updatePloggingMission(updatePloggingRequestDto.distance());
-        trashPickUpMission.updateMission(updatePloggingRequestDto.pickUpCnt());
+        ploggingMission.ifPresent(mission -> mission.updatePloggingMission(updatePloggingRequestDto.distance()));
+        trashPickUpMission.ifPresent(mission -> mission.updateMission(updatePloggingRequestDto.pickUpCnt()));
 
         // 지역 총 점수 업데이트
         Region region = plogging.getRegion();
@@ -166,10 +167,10 @@ public class PloggingService {
                 });
 
         // 미션 업데이트
-        Mission labelingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
+        Optional<Mission> labelingMission = missionRepositoryImpl.findByUserAndMissionNameAndIsCompletedAndCreatedAtDate(
                 user, EMissionName.LABELING, false, LocalDate.now()
-        ).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_MISSION));
-        labelingMission.updateMission(ploggingImageIds.size());
+        );
+        labelingMission.ifPresent(mission -> mission.updateMission(ploggingImageIds.size()));
     }
 
     public void createPloogingReport(UUID userId, Long ploggingId) {
